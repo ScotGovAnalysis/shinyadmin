@@ -49,6 +49,9 @@ manual_record <- manual_record %>% rename(
 
 manual_record <- clean_manual_url(manual_record, url_column="app_link")
 
+# Order manual record columns
+manual_record <- manual_record %>% select(app_title_readable, developer_name, email_address, organisation, team, team_email_contact, link_to_code, cleaned_url)
+
 
 # Make cleaned column for server extract
 df_applications <- clean_extracted_url(df_applications, url_column="url")
