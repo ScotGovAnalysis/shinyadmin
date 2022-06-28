@@ -4,7 +4,7 @@ library(tibble)
 library(dplyr)
 library(stringr)
 library(tidyr)
-
+library(magrittr)
 
 # Main table greyed row col definition ------------------------------------
 
@@ -44,58 +44,41 @@ grey_column_end <- ncol(results_df)
 
 # Summary table -----------------------------------------------------------
 
+# Read and join org acronym to description lookup
+
+org_lookup <- read_csv("organisation_lookup.csv")
+
+results_df <- results_df %>%
+  left_join(org_lookup, by = c("org_if_known" = "org_acronym")) %>%
+  rename(organisation_name = org_description) %>%
+  mutate(organisation_name = if_else(is.na(organisation_name), "not known", organisation_name))
+
+
 # Counts of apps from server and from manual Google Sheet
-
-count_server <- nrow(results_df %>% filter(!is.na(name)))
-count_server <- tibble(Description = "Server total", App_Count = count_server)
-count_manual <- nrow(read_csv("inputs/apps_catalogue.csv"))
-count_manual <- tibble(Description = "(Manual spreadsheet)", App_Count = count_manual)
-
-# Function to extract org name from app name using "org_" convention
-extract_org_prefix <- function(input_url) {
-  head(str_split(tail(str_split(input_url, "/")[[1]], 1), "-")[[1]], 1)
-}
-
-# Extract org from app name to new column
-results_df <- results_df %>% mutate(org_extract = lapply(url, extract_org_prefix))
-
-# If not known org, class as "not specified"
-results_df <- results_df %>% mutate(org_extract = if_else(!org_extract %in% c("sg", "nrs", "nhs", "phs"), list("not specified"), org_extract))
 
 # Summarise the extracted orgs
 org_summary <- results_df %>%
-  filter(!is.na(name)) %>%
-  group_by(org_extract) %>%
+  filter(!is.na(name) & organisation_name != "not known") %>%
+  group_by(organisation_name) %>%
   summarise(App_Count = n()) %>%
-  unnest(org_extract)
+  arrange(desc(App_Count))
 
-# Make them uppper case and col names match for rbind
-org_summary <- org_summary %>%
-  rename(Description = org_extract) %>%
-  mutate(Description = ifelse(Description != "not specified", str_to_upper(Description), Description))
-org_summary <- as_tibble(org_summary)
+org_summary_unknown <- results_df %>%
+  filter(!is.na(name) & organisation_name == "not known") %>%
+  group_by(organisation_name) %>%
+  summarise(App_Count = n())
 
-# rbind all summary results
-full_summary <- rbind(count_server, count_manual, org_summary)
+org_summary <- bind_rows(org_summary, org_summary_unknown)
 
-# Use conversion to a factor for a specific sort order
-full_summary <- full_summary %>%
-  mutate(Description = factor(Description, levels = c("PHS", "SG", "NHS", "NRS", "not specified", "Server total", "(Manual spreadsheet)"))) %>%
-  arrange(Description)
 
-# Drop extracted name from results df
-results_df <- results_df %>% select(-org_extract)
 
-# writing to excel --------------------------------------------------------
+# fix output column names -------------------------------------------------
+
+results_df <- results_df %>% select(name, url, organisation_name, visibility, created_time, hours_used, app_title_readable, developer_name, email_address, organisation, team, team_email_contact, link_to_code)
 
 # Rename some of the main table columns for clarity
-results_df <- results_df %>% rename(app_url = url, hours_used_last_3_months = hours_used)
+results_df <- results_df %>% rename(app_url = url, hours_used_last_3_months = hours_used, organisation_manual_input = organisation)
 
-# Make openxlsx style for greyed rows / columns
-grey_bg_style <- createStyle(fgFill = "#f0f2f5", border = "TopBottomLeftRight", borderColour = "#dadbdd")
-
-# Set the url column to hyperlink excel type
-class(results_df$app_url) <- "hyperlink"
 
 # Set column names to title case
 title_all_col_words <- function(column_name) {
@@ -107,6 +90,18 @@ title_all_col_words <- function(column_name) {
 
 colnames(results_df) <- sapply(colnames(results_df), title_all_col_words)
 
+colnames(org_summary) <- sapply(colnames(org_summary), title_all_col_words)
+
+# writing to excel --------------------------------------------------------
+
+
+# Make openxlsx style for greyed rows / columns
+grey_bg_style <- createStyle(fgFill = "#f0f2f5", border = "TopBottomLeftRight", borderColour = "#dadbdd")
+
+# Set the url column to hyperlink excel type
+class(results_df$App_Url) <- "hyperlink"
+
+
 # Create spreadsheet object and sheets
 wb <- createWorkbook()
 
@@ -114,7 +109,7 @@ sheet_name <- "all_shiny_apps"
 
 addWorksheet(wb, sheet_name)
 
-addWorksheet(wb, "summary")
+addWorksheet(wb, "summary_by_org")
 
 # Create a bold style for column headers
 
@@ -136,7 +131,7 @@ addStyle(wb, sheet_name, bold_grey, rows = 1:1, cols = grey_column_start:grey_co
 setColWidths(wb, sheet = sheet_name, cols = 1:length(names(results_df)), widths = "auto")
 
 # Write summary table
-writeData(wb, sheet = "summary", x = full_summary, colNames = TRUE, startRow = 1, startCol = 1, headerStyle = bold_style)
+writeData(wb, sheet = "summary_by_org", x = org_summary, colNames = TRUE, startRow = 1, startCol = 1, headerStyle = bold_style)
 
 # Save workbook
 output_full_path <- str_replace(latest_result, ".csv", ".xlsx")
