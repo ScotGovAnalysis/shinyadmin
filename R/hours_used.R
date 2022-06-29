@@ -10,7 +10,7 @@ hours_used <- function(app_name, back_months = 3) {
   from_date <- as.Date(Sys.Date()) - lubridate:::months.numeric(back_months)
   tryCatch(
     {
-      sum(rsconnect::showUsage(appName = app_name, from = from_date, until = until_date)[["hours"]])
+      mean(rsconnect::showUsage(appName = app_name, from = from_date, until = until_date)[["hours"]])
     },
     error = function(e) {
       0
