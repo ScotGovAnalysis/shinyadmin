@@ -7,7 +7,7 @@ number_of_connections <- function(app_name, back_months = 3) {
       initial_df <- rsconnect::showMetrics(appName=app_name, metricSeries = "container_status", metricNames = c("connect_count"), from = from_date, until=until_date, interval="1d")
       colnames(initial_df) <- c("metric", "timestampe", "connect_count")
       initial_df$connect_count <- as.numeric(initial_df$connect_count)
-      sum(initial_df$connect_count)
+      mean(initial_df$connect_count)
     },
     error = function(e) {
       0
