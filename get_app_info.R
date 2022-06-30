@@ -16,8 +16,11 @@ source("R/clean_extracted_url.R")
 # Need to make sure connection is set in R Studio first, see README.md
 df_applications <- rsconnect::applications()
 
-# add hours used to dataframe using custom function
-df_applications <- mutate(df_applications, hours_used = sapply(name, hours_used, back_months = 3))
+# add mean hours used to dataframe using custom function
+df_applications <- mutate(df_applications, mean_hours_used = sapply(name, hours_used, back_months = 3))
+
+# add mean connections to dataframe using custom function
+df_applications <- mutate(df_applications, mean_hours_used = sapply(name, hours_used, back_months = 3))
 
 # add the visbility of the app whether public or private using custom function
 df_applications <- mutate(df_applications, visibility = sapply(name, app_visibility))
@@ -77,7 +80,7 @@ extract_org_prefix <- function(input_url) {
     str_split("-") %>%
     extract2(1) %>%
     head(1) %>%
-    if_else(! . %in% c("sg", "phs", "nrs", "nhs", "scotpho", "is", "snh"), "not specified", .)
+    if_else(!. %in% c("sg", "phs", "nrs", "nhs", "scotpho", "is", "snh"), "not specified", .)
 }
 
 
@@ -96,9 +99,13 @@ if (file.exists("inputs/extracted_organisation_review.csv")) {
   org_review <- read_csv("inputs/extracted_organisation_review.csv")
 }
 
-org_review <- org_review %>% rename(org_if_known = org_extract) %>% select(url, org_if_known)
+org_review <- org_review %>%
+  rename(org_if_known = org_extract) %>%
+  select(url, org_if_known)
 
-all_join_output <- all_join_output %>% left_join(org_review, by=c("url")) %>% select(-org_extract)
+all_join_output <- all_join_output %>%
+  left_join(org_review, by = c("url")) %>%
+  select(-org_extract)
 
 # export final results csv ------------------------------------------------------
 
