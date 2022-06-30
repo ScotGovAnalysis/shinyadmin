@@ -4,6 +4,7 @@ library(stringr)
 library(tidyr)
 
 source("R/hours_used.R")
+source("R/number_of_connections.R")
 source("R/app_visibility.R")
 source("R/clean_manual_url.R")
 source("R/clean_extracted_url.R")
