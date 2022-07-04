@@ -18,6 +18,7 @@ source("R/clean_extracted_url.R")
 df_applications <- rsconnect::applications()
 
 # add mean hours, mean coonnections visibility to dataframe using custom functions
+cat("Getting info per app from shinyapps.io. Please wait...")
 df_applications <- mutate(df_applications,
   mean_hours_used = sapply(name, hours_used, back_months = 3),
   mean_connections = sapply(name, number_of_connections, back_months = 3),
