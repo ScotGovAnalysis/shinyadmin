@@ -17,22 +17,21 @@ source("R/clean_extracted_url.R")
 # Need to make sure connection is set in R Studio first, see README.md
 df_applications <- rsconnect::applications()
 
-# add mean hours used to dataframe using custom function
-df_applications <- mutate(df_applications, mean_hours_used = sapply(name, hours_used, back_months = 3))
+# add mean hours, mean coonnections visibility to dataframe using custom functions
+df_applications <- mutate(df_applications,
+  mean_hours_used = sapply(name, hours_used, back_months = 3),
+  mean_connections = sapply(name, number_of_connections, back_months = 3),
+  visibility = sapply(name, app_visibility)
+)
 
-# add mean connections to dataframe using custom function
-df_applications <- mutate(df_applications, mean_hours_used = sapply(name, hours_used, back_months = 3))
-
-# add the visbility of the app whether public or private using custom function
-df_applications <- mutate(df_applications, visibility = sapply(name, app_visibility))
 
 # select columns to output
-output_columns <- c("name", "url", "visibility", "created_time", "hours_used")
+output_columns <- c("name", "url", "visibility", "created_time", "mean_hours_used", "mean_connections")
 
 df_applications <- select(df_applications, all_of(output_columns))
 
 # Sort desc by usage
-df_applications <- arrange(df_applications, dplyr::desc(hours_used))
+df_applications <- arrange(df_applications, dplyr::desc(mean_hours_used))
 
 
 # manually maintained record join -----------------------------------------
@@ -68,7 +67,7 @@ manual_record <- manual_record %>% select(app_title_readable, developer_name, em
 df_applications <- clean_extracted_url(df_applications, url_column = "url")
 
 # Full join by cleaned URLS
-all_join_output <- server_extract %>% full_join(manual_record, by = c("url" = "cleaned_url"))
+all_join_output <- df_applications %>% full_join(manual_record, by = c("url" = "cleaned_url"))
 
 
 # organisation extract for manual review ----------------------------------
