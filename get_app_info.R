@@ -4,6 +4,7 @@ library(stringr)
 library(tidyr)
 
 source("R/hours_used.R")
+source("R/number_of_connections.R")
 source("R/app_visibility.R")
 source("R/clean_manual_url.R")
 source("R/clean_extracted_url.R")
@@ -16,19 +17,22 @@ source("R/clean_extracted_url.R")
 # Need to make sure connection is set in R Studio first, see README.md
 df_applications <- rsconnect::applications()
 
-# add hours used to dataframe using custom function
-df_applications <- mutate(df_applications, hours_used = sapply(name, hours_used, back_months = 3))
+# add mean hours, mean coonnections visibility to dataframe using custom functions
+cat("Getting info per app from shinyapps.io. Please wait...")
+df_applications <- mutate(df_applications,
+  mean_hours_used = sapply(name, hours_used, back_months = 3),
+  mean_connections = sapply(name, number_of_connections, back_months = 3),
+  visibility = sapply(name, app_visibility)
+)
 
-# add the visbility of the app whether public or private using custom function
-df_applications <- mutate(df_applications, visibility = sapply(name, app_visibility))
 
 # select columns to output
-output_columns <- c("name", "url", "visibility", "created_time", "hours_used")
+output_columns <- c("name", "url", "visibility", "created_time", "mean_hours_used", "mean_connections")
 
 df_applications <- select(df_applications, all_of(output_columns))
 
 # Sort desc by usage
-df_applications <- arrange(df_applications, dplyr::desc(hours_used))
+df_applications <- arrange(df_applications, dplyr::desc(mean_hours_used))
 
 
 # manually maintained record join -----------------------------------------
@@ -64,7 +68,7 @@ manual_record <- manual_record %>% select(app_title_readable, developer_name, em
 df_applications <- clean_extracted_url(df_applications, url_column = "url")
 
 # Full join by cleaned URLS
-all_join_output <- server_extract %>% full_join(manual_record, by = c("url" = "cleaned_url"))
+all_join_output <- df_applications %>% full_join(manual_record, by = c("url" = "cleaned_url"))
 
 
 # organisation extract for manual review ----------------------------------
@@ -77,7 +81,7 @@ extract_org_prefix <- function(input_url) {
     str_split("-") %>%
     extract2(1) %>%
     head(1) %>%
-    if_else(! . %in% c("sg", "phs", "nrs", "nhs", "scotpho", "is", "snh"), "not specified", .)
+    if_else(!. %in% c("sg", "phs", "nrs", "nhs", "scotpho", "is", "snh"), "not specified", .)
 }
 
 
@@ -96,9 +100,13 @@ if (file.exists("inputs/extracted_organisation_review.csv")) {
   org_review <- read_csv("inputs/extracted_organisation_review.csv")
 }
 
-org_review <- org_review %>% rename(org_if_known = org_extract) %>% select(url, org_if_known)
+org_review <- org_review %>%
+  rename(org_if_known = org_extract) %>%
+  select(url, org_if_known)
 
-all_join_output <- all_join_output %>% left_join(org_review, by=c("url")) %>% select(-org_extract)
+all_join_output <- all_join_output %>%
+  left_join(org_review, by = c("url")) %>%
+  select(-org_extract)
 
 # export final results csv ------------------------------------------------------
 
