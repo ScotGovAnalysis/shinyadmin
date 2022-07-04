@@ -14,33 +14,6 @@ latest_result <- get_latest_output("outputs")
 
 results_df <- read_csv(latest_result)
 
-# Get row index of first NA row
-get_first_na <- function(input_df, column_name) {
-  filtered_df <- input_df %>%
-    rowid_to_column() %>%
-    filter(is.na(.data[[column_name]])) %>%
-    head(1) %>%
-    .[["rowid"]]
-}
-
-# Get column index of specified column name
-get_column_index <- function(input_df, column_name) {
-  col_names <- names(input_df)
-  grep(column_name, col_names)
-}
-
-# Start of 'greyed out' rows by null app name
-grey_row_start <- get_first_na(results_df, "name") + 1
-
-# End of greyed out rows by df length
-grey_row_end <- nrow(results_df) + 1
-
-# Start of greyed out columns by column name
-grey_column_start <- get_column_index(results_df, "app_title_readable")
-
-# End of greyed columns == number of columns
-grey_column_end <- ncol(results_df)
-
 
 # Summary table -----------------------------------------------------------
 
@@ -74,10 +47,30 @@ org_summary <- bind_rows(org_summary, org_summary_unknown)
 
 # fix output column names -------------------------------------------------
 
-results_df <- results_df %>% select(name, url, organisation_name, visibility, created_time, hours_used, app_title_readable, developer_name, email_address, organisation, team, team_email_contact, link_to_code)
+results_df <- results_df %>% select(
+  name,
+  url,
+  organisation_name,
+  visibility,
+  created_time,
+  mean_hours_used,
+  mean_connections,
+  app_title_readable,
+  developer_name,
+  email_address,
+  organisation,
+  team,
+  team_email_contact,
+  link_to_code
+)
 
 # Rename some of the main table columns for clarity
-results_df <- results_df %>% rename(app_url = url, hours_used_last_3_months = hours_used, organisation_manual_input = organisation)
+results_df <- results_df %>% rename(
+  app_url = url,
+  mean_hours_used_per_day = mean_hours_used,
+  mean_daytime_connections = mean_connections,
+  organisation_manual_input = organisation
+)
 
 
 # Set column names to title case
@@ -91,6 +84,39 @@ title_all_col_words <- function(column_name) {
 colnames(results_df) <- sapply(colnames(results_df), title_all_col_words)
 
 colnames(org_summary) <- sapply(colnames(org_summary), title_all_col_words)
+
+
+# grey row column positions -----------------------------------------------
+
+# Get row index of first NA row
+get_first_na <- function(input_df, column_name) {
+  filtered_df <- input_df %>%
+    rowid_to_column() %>%
+    filter(is.na(.data[[column_name]])) %>%
+    head(1) %>%
+    .[["rowid"]]
+}
+
+# Get column index of specified column name
+get_column_index <- function(input_df, column_name) {
+  col_names <- colnames(input_df)
+  grep(column_name, col_names)
+}
+
+# Start of 'greyed out' rows by null app name
+grey_row_start <- get_first_na(results_df, "Name") + 1
+
+# End of greyed out rows by df length
+grey_row_end <- nrow(results_df) + 1
+
+# Start of greyed out columns by column name
+grey_column_start <- get_column_index(results_df, "App_Title_Readable")
+
+# End of greyed columns == number of columns
+grey_column_end <- ncol(results_df)
+
+# Populate no app name rows with No LONGER ON scotland.shinyapps.io
+results_df <- results_df %>% mutate(Name = ifelse(is.na(Name), "NO LONGER ON scotland.shinyapps.io", Name))
 
 # writing to excel --------------------------------------------------------
 
