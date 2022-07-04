@@ -66,6 +66,7 @@ results_df <- results_df %>% select(
 
 # Rename some of the main table columns for clarity
 results_df <- results_df %>% rename(
+  app_name = name,
   app_url = url,
   mean_active_hours_per_day = mean_hours_used,
   mean_daytime_connections = mean_connections,
