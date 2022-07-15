@@ -15,7 +15,7 @@ library(plotly)
 library(readr)
 ```
 
-```{r data}
+```{r global, include=FALSE}
 source("../R/get_latest_output.R")
 latest_result <- get_latest_output("../outputs", file_prefix="apps_full_activity")
 all_apps_df <- read_csv(latest_result)
