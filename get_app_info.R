@@ -97,7 +97,9 @@ write_csv(org_review, "outputs/extracted_organisation_review.csv")
 # NOTE: master copy of edited app vs organisation list should be in inputs
 
 if (file.exists("inputs/extracted_organisation_review.csv")) {
-  org_review <- read_csv("inputs/extracted_organisation_review.csv")
+  org_review_input <- read_csv("inputs/extracted_organisation_review.csv")
+  org_extra <- org_review %>% filter(! url %in% org_review_input$url)
+  org_review <- bind_rows(org_review_input, org_extra)
 }
 
 org_review <- org_review %>%
