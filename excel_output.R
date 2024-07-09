@@ -6,7 +6,7 @@ library(stringr)
 library(tidyr)
 library(magrittr)
 
-# Main table greyed row col definition ------------------------------------
+source("R/get_latest_output.R")
 
 
 # Read in latest csv result (find most recent file in outputs dir)
@@ -66,6 +66,7 @@ results_df <- results_df %>% select(
 
 # Rename some of the main table columns for clarity
 results_df <- results_df %>% rename(
+  app_name = name,
   app_url = url,
   mean_active_hours_per_day = mean_hours_used,
   mean_daytime_connections = mean_connections,
@@ -104,7 +105,7 @@ get_column_index <- function(input_df, column_name) {
 }
 
 # Start of 'greyed out' rows by null app name
-grey_row_start <- get_first_na(results_df, "Name") + 1
+grey_row_start <- get_first_na(results_df, "App_Name") + 1
 
 # End of greyed out rows by df length
 grey_row_end <- nrow(results_df) + 1
@@ -116,7 +117,7 @@ grey_column_start <- get_column_index(results_df, "App_Title_Readable")
 grey_column_end <- ncol(results_df)
 
 # Populate no app name rows with No LONGER ON scotland.shinyapps.io
-results_df <- results_df %>% mutate(Name = ifelse(is.na(Name), "NO LONGER ON scotland.shinyapps.io", Name))
+results_df <- results_df %>% mutate(App_Name = ifelse(is.na(App_Name), "NO LONGER ON scotland.shinyapps.io", App_Name))
 
 # writing to excel --------------------------------------------------------
 
