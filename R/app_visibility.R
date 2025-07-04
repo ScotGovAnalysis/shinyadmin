@@ -1,7 +1,7 @@
 #' Determine whether app is public or private
 #'
 #' @param app_name Character vector of names of apps on the Shiny Server.
-#' @param account Name of Shiny Server account where app is deployed.
+#' @inheritParams server_apps
 #'
 #' @return Character vector of "public" or "private".
 #'
