@@ -14,12 +14,24 @@
 server_apps <- function(account = "scotland", 
                         visibility = TRUE) {
   
+  # Check account exists
+  if(!account %in% rsconnect::accounts()$name) {
+    cli::cli_abort(
+      "{.val {account}} account not registered in RStudio.\n",
+      "Use `rsconnect::setAccountInfo() to register before proceeding."
+    )
+  }
+  
   cli::cli_progress_step(
     msg = "Getting server apps",
     msg_done = "Getting server apps | Complete!"
   )
   
-  apps <- rsconnect::applications(account = account)
+  apps <- 
+    rsconnect::applications(account = account) %>%
+    mutate(across(contains("time"), ymd_hms),
+           url = str_remove(url, "/$") %>% str_to_lower()) %>%
+    select(-id, -instances, -guid, -title)
   
   cli::cli_progress_done()
   
