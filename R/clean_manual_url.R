@@ -27,7 +27,7 @@ clean_manual_url <- function(url, account = "scotland") {
   dplyr::case_when(
     stringr::str_detect(new, glue::glue("^https://")) ~ new,
     new == "" ~ NA_character_,
-    .default = glue::glue("https://{account}.shinyapps.io/{new}/")
+    .default = glue::glue("https://{account}.shinyapps.io/{new}")
   )
   
 }
