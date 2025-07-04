@@ -5,6 +5,8 @@
 #'
 #' @param account Name of Shiny Server account where app is deployed.
 #' @param visibility Logical: Should app visibility data be included?
+#' @param hours_used Logical: Should hours used data be included? 
+#' @inheritParams app_hours_used
 #'
 #' @return Tibble.
 #' @export
@@ -12,7 +14,9 @@
 #' @examples server_apps()
 
 server_apps <- function(account = "scotland", 
-                        visibility = TRUE) {
+                        visibility = FALSE,
+                        hours_used = FALSE,
+                        back_months = 3) {
   
   # Check account exists
   if(!account %in% rsconnect::accounts()$name) {
@@ -37,6 +41,11 @@ server_apps <- function(account = "scotland",
   
   if (visibility) {
     apps <- apps %>% dplyr::mutate(visibility = app_visibility(name, account))
+  }
+  
+  if (hours_used) {
+    apps <- apps %>% 
+      dplyr::mutate(hours_used = app_hours_used(name, account, back_months))
   }
   
   tibble::as_tibble(apps)
