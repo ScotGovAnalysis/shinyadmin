@@ -27,7 +27,7 @@ app_hours_used <- function(app_name, account = "scotland", back_months = 3) {
               dplyr::pull(hours) %>%
               sum()
           },
-          error = \(e) NA_real_
+          error = \(e) 0
         )
       },
       .progress = progress("Getting hours used data")
