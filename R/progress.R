@@ -14,7 +14,7 @@ progress <- function(name) {
     format = paste0(
       "{cli::col_blue(cli::symbol$info)} ", 
       name, 
-      ": {cli::pb_current}/{cli::pb_total}"
+      ": {cli::pb_current}/{cli::pb_total} | {cli::pb_eta_str}"
     ),
     format_done = paste(
       "{cli::col_green(cli::symbol$tick)}", 
