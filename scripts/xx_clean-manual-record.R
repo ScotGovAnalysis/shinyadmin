@@ -4,7 +4,7 @@
 # in the future.
 
 
-# 0 - Load libraries and functions ----
+# 0 - Load packages and functions ----
 
 library(readr)
 library(here)
