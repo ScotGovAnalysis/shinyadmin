@@ -1,0 +1,84 @@
+
+# 0 - Load packages and functions ----
+
+library(here)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(stringdist)
+library(stringr)
+library(janitor)
+library(fuzzyjoin)
+
+source(here("R", "get_latest_output.R"))
+source(here("R", "url_remove_dates.R"))
+
+
+# 1 - Read server data and manual record data ----
+
+manual <- 
+  read_rds(here("outputs", "2024-07-16_manual-record.rds")) %>%
+  mutate(url_no_date = url_remove_dates(url),
+         id = row_number()) %>%
+  group_by(url_no_date) %>%
+  filter(date == max(date)) %>%
+  ungroup() %>%
+  rename(manual_record_date = date)
+
+server <- 
+  read_rds(get_latest_output(here("outputs"), "server-data", "rds")) %>%
+  mutate(url_no_date = url_remove_dates(url))
+
+
+# 2 - Match data on URL and URL with dates removed ----
+
+apps <- 
+  server %>%
+  left_join(manual %>% select(id, url), 
+            by = "url") %>%
+  left_join(manual %>% select(id, url_no_date),
+            by = "url_no_date",
+            suffix = c("_url", "_url_no_date"))
+
+# Check
+apps %>%
+  mutate(url_match = !is.na(id_url), 
+         url_no_date_match = !is.na(id_url_no_date), 
+         same_match = id_url == id_url_no_date) %>%
+  count(url_match, url_no_date_match, same_match)
+
+
+# 3 - Tidy data ----
+
+# Add manual record data
+apps <- 
+  apps %>%
+  mutate(id = ifelse(!is.na(id_url), id_url, id_url_no_date)) %>%
+  select(-url_no_date, -matches("^id_.*")) %>%
+  left_join(manual %>% select(-url_no_date), 
+            by = "id",
+            suffix = c("", "_manual")) %>%
+  select(-id, -url_manual)
+  
+# Merge organisation data
+apps <-
+  apps %>%
+  mutate(org = case_when(
+    is.na(org) ~ org_manual,
+    is.na(org_manual) ~ org,
+    org == org_manual ~ org,
+    org != org_manual ~ "mismatch"
+  )) %>%
+  select(-org_manual)
+
+
+# 4 - Save matched data ----
+
+write_rds(
+  apps,
+  here("outputs", paste0(Sys.Date(), "_app-data.rds")),
+  compress = "gz"
+)
+
+
+### END OF SCRIPT ###
