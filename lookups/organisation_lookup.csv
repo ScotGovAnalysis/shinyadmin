@@ -1,12 +1,12 @@
-org_acronym,org_description
-sg,Scottish Government
-nrs,National Records of Scotland
-phs,Public Health Scotland
-scotpho,Public Health Scotland
-isd,Public Health Scotland
-nhs,Public Health Scotland
-is,Improvement Service
-snh,Scottish Natural Heritage
-ts,Transport Scotland
-fwc,Fair Work Convention
-ps,Police Scotland
+org_acronym,org_description, sg_agency
+sg,Scottish Government, TRUE
+nrs,National Records of Scotland, TRUE
+phs,Public Health Scotland, FALSE
+scotpho,Public Health Scotland, FALSE
+isd,Public Health Scotland, FALSE
+nhs,Public Health Scotland, FALSE
+is,Improvement Service, FALSE
+snh,Scottish Natural Heritage, FALSE
+ts,Transport Scotland, TRUE
+fwc,Fair Work Convention, TRUE
+ps,Police Scotland, FALSE
