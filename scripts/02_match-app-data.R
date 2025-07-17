@@ -56,7 +56,8 @@ apps <-
   left_join(manual %>% select(-url_no_date), 
             by = "id",
             suffix = c("", "_manual")) %>%
-  select(-id, -url_manual)
+  select(-id, -url_manual) %>%
+  mutate(contact_known = !is.na(manual_record_date))
   
 # Merge organisation data
 apps <-
