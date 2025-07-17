@@ -60,6 +60,12 @@ apps <-
   mutate(contact_known = !is.na(manual_record_date))
   
 # Merge organisation data
+
+org_lookup <- 
+  read_csv(here("lookups", "organisation_lookup.csv")) %>%
+  select(org_description, sg_agency) %>%
+  distinct()
+
 apps <-
   apps %>%
   mutate(org = case_when(
@@ -68,8 +74,9 @@ apps <-
     org == org_manual ~ org,
     org != org_manual ~ "mismatch"
   )) %>%
-  select(-org_manual)
-
+  select(-org_manual) %>%
+  left_join(org_lookup, by = join_by(org == org_description))
+  
 
 # 4 - Save matched data ----
 
