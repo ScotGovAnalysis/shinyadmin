@@ -24,7 +24,7 @@ manual <-
   rename(manual_record_date = date)
 
 server <- 
-  read_rds(get_latest_output(here("outputs"), "server-data", "rds")) %>%
+  read_rds(get_latest_output("server-data")) %>%
   mutate(url_no_date = url_remove_dates(url))
 
 
