@@ -1,3 +1,6 @@
+# Name: 02_match-app-data.R
+# Description: Match submitted contact details to server data
+
 
 # 0 - Load packages and functions ----
 
