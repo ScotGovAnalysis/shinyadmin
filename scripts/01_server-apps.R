@@ -26,7 +26,9 @@ apps <- server_apps("scotland",
   
 # 2 - Identify organisations ----
 
-org_lookup <- read_csv(here("lookups", "organisation_lookup.csv"))
+org_lookup <- 
+  read_csv(here("lookups", "organisation_lookup.csv")) %>%
+  select(-sg_agency)
 
 apps <-
   apps %>%
