@@ -11,6 +11,7 @@ library(janitor)
 library(forcats)
 library(purrr)
 library(writexl)
+library(tidyr)
 
 source(here("R", "get_latest_output.R"))
 
@@ -23,14 +24,18 @@ apps <-
   
   # Group SG agencies as one organisation
   mutate(
-    org = case_when(
+    org_grouped = case_when(
       sg_agency ~ "Scottish Government (inc. agencies)",
-      is.na(org) ~ "Unknown",
-      TRUE ~ org
+      org == "Public Health Scotland" ~ org,
+      !is.na(org) ~ "Other",
+      is.na(org) ~ "Unknown"
     ),
-    org = as_factor(org) %>% 
-      fct_infreq() %>% 
-      fct_relevel("Unknown", after = Inf)
+    org_grouped = factor(org_grouped, 
+                         levels = c("Scottish Government (inc. agencies)",
+                                    "Public Health Scotland",
+                                    "Other",
+                                    "Unknown")),
+    org = replace_na(org, "Unknown")
   ) %>%
   select(-sg_agency)
 
@@ -39,7 +44,7 @@ apps <-
 
 summary <-
   apps %>%
-  group_by(org) %>%
+  group_by(org = org_grouped) %>%
   summarise(n_apps = n(),
             n_contact_known = sum(contact_known),
             .groups = "drop") %>%
@@ -51,12 +56,22 @@ summary <-
 out <- 
   c(
     list(Summary = summary),
-    split(apps, apps$org)
+    split(apps, apps$org_grouped)
   ) %>%
   set_names(
     \(x) ifelse(x == "Scottish Government (inc. agencies)",
                 "SG (inc. agencies)",
                 x)
+  ) %>%
+  imap(
+    \(x, idx) if (idx == "Summary") {
+      x
+    } else {
+      x %>% 
+        select(-any_of(c("contact_known", "org_grouped"))) %>%
+        arrange(org != "Scottish Government", org, name) %>%
+        relocate(org, .before = 0)
+    }
   )
 
 
