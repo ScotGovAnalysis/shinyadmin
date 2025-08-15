@@ -1,19 +1,28 @@
 #' Determine whether app is public or private
 #'
-#' @param app_name Name of the app on the Shiny Server.
+#' @param app_name Character vector of names of apps on the Shiny Server.
+#' @inheritParams server_apps
 #'
-#' @return chatacter string of "public" or "private".
+#' @return Character vector of "public" or "private".
 #'
 #' @examples
-#' get_visibiity("my_app")
-app_visibility <- function(app_name) {
-  tryCatch(
-    {
-      all_properties <- rsconnect::showProperties(appName = app_name)
-      all_properties["application.visibility", ][1]
-    },
-    error = function(e) {
-      "Not available"
-    }
-  )
+#' app_visibility("my_app")
+
+app_visibility <- function(app_name, account = "scotland") {
+  
+  app_name %>%
+    purrr::map(
+      \(x) {
+        tryCatch(
+          {
+            rsconnect::showProperties(appName = x, account = account) %>%
+              magrittr::extract("application.visibility", 1)
+          },
+          error = \(e) NA_character_
+        )
+      },
+      .progress = progress("Getting app visibility data")
+    ) %>%
+    purrr::list_c()
+  
 }

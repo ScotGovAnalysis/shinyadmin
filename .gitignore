@@ -38,8 +38,8 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# Ignore outputs
 outputs/
-
-#Ignore inputs
 inputs/
+lookups/invalid-urls.csv
+*.html
+
