@@ -41,4 +41,5 @@ vignettes/*.pdf
 outputs/
 inputs/
 lookups/invalid-urls.csv
+*.html
 
