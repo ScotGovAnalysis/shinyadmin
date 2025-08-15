@@ -1,12 +1,31 @@
 # Shiny Server Analysis
-Using the [rsconnect](https://cran.r-project.org/web/packages/rsconnect/) library to analyse stats on existing [shinyapps.io](https://www.shinyapps.io/) apps running under Scotland organisation account. Requires membership of the Shiny organisation.  
 
-It is necessary to connect to Shiny server wish to analyse in R Studio and then run code in this repository via R Studio.  
+The code in this repository is used to assist with administration of the Scottish Public Sector [shinyapps.io](https://www.shinyapps.io/) account (scotland.shinyapps.io). 
 
-To connect:  
+## Prerequisites
 
-Tools > Global Options > Publishing > Publishing Accounts and specify connection information and login details for Shiny Server.
+1. You must be a member of the `scotland` shinyapps.io account.
 
-The main analysis is run from `get_app_info.R`. This includes analysis on a manually maintained Google Sheet that was used as a register of the apps. This should be downloaded first of all as a CSV file and placed in the  `inputs` folder.  
+2. You must have registered the `scotland` account in RStudio using an account token and secret. This can be done using the following code:
 
-After running this script to generate results CSV for the current date in `outputs`, a formatted Excel sheet of results, including summary of apps per organisation can be created by running `excel_output.R`
+    ```
+    rsconnect::setAccountInfo(
+      name   = "scotland",
+      token  = "",
+      secret = ""
+    )
+    ```
+
+## Data
+
+## Process
+
+## Output
+
+## Contact
+
+This repository is maintained by [Alice Hannah](mailto:alice.hannah@gov.scot) and [Tom Wilson](mailto:thomas.wilson@gov.scot).
+
+## Licence
+
+[MIT License](LICENCE)
