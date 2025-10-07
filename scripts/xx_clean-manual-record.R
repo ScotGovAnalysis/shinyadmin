@@ -6,7 +6,7 @@
 
 # 0 - Run setup script ----
 
-source(here("scripts", "00_setup.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Read and clean Google survey data ----
@@ -91,10 +91,12 @@ if (file.exists(invalid_url_path)) {
 
 # 3 - Save clean dataset ----
 
-write_rds(
-  google,
-  here("outputs", "2024-07-16_manual-record.rds"),
-  compress = "gz"
+write_dataframe_to_db(
+  config$adm_server,
+  config$database,
+  config$schema,
+  table_name = "contacts_old",
+  dataframe = google
 )
 
 
