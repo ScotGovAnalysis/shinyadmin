@@ -1,4 +1,4 @@
-# Name: xx_clean-manual-record.R
+# Name: clean-old-contact-data.R
 # Description: This code is used to clean the raw data from the old Google form.
 # This form doesn't exist anymore, so this code shouldn't need to be run again 
 # in the future.
