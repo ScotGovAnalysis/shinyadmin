@@ -4,16 +4,9 @@
 # in the future.
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(readr)
-library(here)
-library(dplyr)
-library(stringr)
-library(tidyr)
-library(lubridate)
-
-source(here("R", "clean_manual_url.R"))
+source(here("scripts", "00_setup.R"))
 
 
 # 1 - Read and clean Google survey data ----
