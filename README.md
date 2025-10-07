@@ -24,7 +24,7 @@ The code in this repository is used to assist with administration of the Scottis
 
 ## Contact
 
-This repository is maintained by [Alice Hannah](mailto:alice.hannah@gov.scot) and [Tom Wilson](mailto:thomas.wilson@gov.scot).
+This repository is maintained by the [Data Innovation team](mailto:alice.hannah@gov.scot;thomas.wilson@gov.scot).
 
 ## Licence
 
