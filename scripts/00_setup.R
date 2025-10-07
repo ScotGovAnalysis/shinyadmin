@@ -30,7 +30,7 @@ walk(
 
 config <- c(
   read_yaml(here("config.yml")),
-  db = "AdministrationShinyapps",
+  database = "AdministrationShinyapps",
   schema = "supportadmin"
 )
 
