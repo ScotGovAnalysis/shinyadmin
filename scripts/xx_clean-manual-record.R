@@ -69,12 +69,14 @@ google <-
   filter(!is.na(url)) %>%
   bind_rows(missing_urls)
 
-if (file.exists(here("lookups", "invalid-urls.csv"))) {
+invalid_url_path <- here("lookups", "invalid-urls.csv")
+
+if (file.exists(invalid_url_path)) {
   
   invalid_urls <- 
     google %>% 
     filter(!str_starts(url, "https://scotland.shinyapps.io/")) %>%
-    left_join(read_csv(here("lookups", "invalid-urls.csv")), 
+    left_join(read_csv(invalid_url_path), 
               by = join_by(url == invalid_url)) %>%
     mutate(url = valid_url) %>%
     select(-valid_url)
