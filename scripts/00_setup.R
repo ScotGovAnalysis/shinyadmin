@@ -16,6 +16,9 @@ library(purrr)
 library(tidyr)
 library(lubridate)
 library(RtoSQLServer)
+library(janitor)
+library(forcats)
+library(writexl)
 
 
 # 2 - Load functions ----

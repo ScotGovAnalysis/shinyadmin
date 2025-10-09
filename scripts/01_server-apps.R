@@ -2,19 +2,9 @@
 # Description: Extract app data from shinyapps.io
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(rsconnect)
-library(dplyr)
-library(lubridate)
-library(stringr)
-library(here)
-library(readr)
-
-source(here("R", "server_apps.R"))
-source(here("R", "progress.R"))
-source(here("R", "app_visibility.R"))
-source(here("R", "app_hours_used.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Get app data from server ----

@@ -2,18 +2,9 @@
 # Description: Save app data to formatted Excel file
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(here)
-library(readr)
-library(dplyr)
-library(janitor)
-library(forcats)
-library(purrr)
-library(writexl)
-library(tidyr)
-
-source(here("R", "get_latest_output.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Read app data ----

@@ -2,17 +2,9 @@
 # Description: Match submitted contact details to server data
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(here)
-library(readr)
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(janitor)
-
-source(here("R", "get_latest_output.R"))
-source(here("R", "url_remove_dates.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Read server data and manual record data ----
