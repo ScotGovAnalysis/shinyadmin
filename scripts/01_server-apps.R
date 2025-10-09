@@ -18,7 +18,7 @@ apps <- server_apps("scotland",
 
 org_lookup <- 
   read_csv(here("lookups", "organisation_lookup.csv")) %>%
-  select(-sg_agency)
+  select(-sg_agency, -ms_form_accepted)
 
 apps <-
   apps %>%
