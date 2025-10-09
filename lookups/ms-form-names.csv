@@ -1,0 +1,15 @@
+new,old
+ms_id,Id
+ms_start_time,Start time
+completed_time,Completion time
+ms_email,Email
+ms_name,Name
+url,What is the URL for your Shiny app?
+org,What organisation does the app belong to?
+dev_name,What is your name?
+dev_email,What is your work email address?
+team_name,What is the name of your team within your organisation?
+team_email,What is the email address of your team?
+update_frequency,How often do you plan to update your app?
+update_method,How do you plan to update your app?
+update_detail,Please provide further details of your update process.
