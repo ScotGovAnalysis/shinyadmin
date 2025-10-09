@@ -16,7 +16,7 @@ clean_manual_url <- function(url, account = "scotland") {
     url %>%
     stringr::str_to_lower() %>%
     stringr::str_remove_all(
-      glue::glue("(https?://)?{account}\\.shiny+apps\\.io/")
+      stringr::str_glue("(https?://)?{account}\\.shiny+apps\\.io/")
     ) %>%
     stringr::str_remove("/$") %>%
     stringr::str_remove("^/") %>%
@@ -25,9 +25,9 @@ clean_manual_url <- function(url, account = "scotland") {
     stringr::str_remove_all("<?>?")
   
   dplyr::case_when(
-    stringr::str_detect(new, glue::glue("^https://")) ~ new,
+    stringr::str_detect(new, stringr::str_glue("^https://")) ~ new,
     new == "" ~ NA_character_,
-    .default = glue::glue("https://{account}.shinyapps.io/{new}")
+    .default = stringr::str_glue("https://{account}.shinyapps.io/{new}")
   )
   
 }
