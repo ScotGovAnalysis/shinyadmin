@@ -10,7 +10,12 @@ source(here::here("scripts", "00_setup.R"))
 # 1 - Read server data and manual record data ----
 
 manual <- 
-  read_rds(here("outputs", "2024-07-16_manual-record.rds")) %>%
+  read_table_from_db(
+    config$adm_server,
+    config$database,
+    config$schema,
+    "contacts_old" 
+  ) %>%
   mutate(url_no_date = url_remove_dates(url),
          id = row_number()) %>%
   group_by(url_no_date) %>%
