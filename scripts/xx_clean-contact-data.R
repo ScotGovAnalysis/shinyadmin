@@ -10,7 +10,7 @@ source(here::here("scripts", "00_setup.R"))
 
 contacts <- 
   read_xlsx(config$ms_form_path) %>%
-  rename(!!!deframe(lookups$ms_form_names))
+  rename_cols(lookups$ms_form_names)
 
 
 ### END OF SCRIPT ###
