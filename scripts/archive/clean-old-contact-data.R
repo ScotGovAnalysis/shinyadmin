@@ -20,7 +20,7 @@ google <-
   
   # Rename and reorder columns
   select(
-    date = "Timestamp",
+    completed_time = "Timestamp",
     app_name = "App title (human readable title)",
     url = "App link (scotland.shinyapps.io/...)",
     org = "Organisation",
@@ -31,8 +31,7 @@ google <-
     code_url = "Link to code (if available)"
   ) %>%
   
-  # Format date
-  mutate(date = dmy_hms(date)) %>%
+  mutate(completed_time = dmy_hms(completed_time)) %>%
   
   # Clean URLs
   separate_longer_delim(cols = url, delim = regex("\\nto be changed to\\s")) %>%
@@ -49,7 +48,7 @@ google <-
   
   # Remove duplicates where later record submitted
   group_by(url) %>%
-  filter(n() == 1 | date == max(date)) %>%
+  filter(n() == 1 | completed_time == max(completed_time)) %>%
   ungroup()
 
 
