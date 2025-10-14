@@ -1,5 +1,5 @@
-# Name: 01_server-apps.R
-# Description: Extract app data from shinyapps.io
+# Name: xx_snapshot-server-app-data.R
+# Description: Take a snapshot of app data from shinyapps.io and write to ADM
 
 
 # 0 - Run setup script ----

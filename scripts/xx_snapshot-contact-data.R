@@ -1,5 +1,5 @@
-# Name: xx_clean-contact-data.R
-# Description: Clean contact data from MS Form and save to ADM
+# Name: xx_snapshot-contact-data.R
+# Description: Take a snapshot of contact data from MS Form and write to ADM
 
 
 # 0 - Run setup script ----
