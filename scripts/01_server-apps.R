@@ -13,27 +13,15 @@ apps <- server_apps("scotland",
                     visibility = TRUE, 
                     hours_used = TRUE)
 
-  
-# 2 - Identify organisations ----
 
-org_lookup <- 
-  read_csv(here("lookups", "organisation_lookup.csv")) %>%
-  select(-sg_agency, -ms_form_accepted)
+# 2 - Write data to ADM ----
 
-apps <-
-  apps %>%
-  mutate(org_acronym = tolower(word(name, 1, sep = regex("[_-]")))) %>%
-  left_join(org_lookup, by = join_by(org_acronym)) %>%
-  rename(org = org_description) %>%
-  select(-org_acronym)
-
-
-# 3 - Save data ----
-
-write_rds(
-  apps,
-  here("outputs", paste0(Sys.Date(), "_server-data.rds")),
-  compress = "gz"
+write_dataframe_to_db(
+  config$adm_server,
+  config$database,
+  config$schema,
+  table_name = "server_apps",
+  dataframe = apps
 )
 
 
