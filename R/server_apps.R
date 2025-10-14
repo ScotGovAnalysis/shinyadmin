@@ -48,6 +48,8 @@ server_apps <- function(account = "scotland",
       dplyr::mutate(hours_used = app_hours_used(name, account, back_months))
   }
   
-  tibble::as_tibble(apps)
+  tibble::as_tibble(apps) %>%
+    mutate(record_date = lubridate::today(tzone = "UTC"),
+           .before = 0)
   
 }
