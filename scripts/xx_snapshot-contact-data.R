@@ -13,7 +13,7 @@ contacts <-
   read_xlsx(config$ms_form_path) %>%
   rename_cols(lookups$ms_form_names) %>%
   select(-starts_with("ms")) %>%
-  mutate(completed_time = ymd_hms(completed_time),
+  mutate(form_completed_time = ymd_hms(form_completed_time),
          across(!matches("time"), as.character))
 
 

@@ -1,7 +1,7 @@
 new,old
 response_id,Id
 ms_start_time,Start time
-completed_time,Completion time
+form_completed_time,Completion time
 ms_email,Email
 ms_name,Name
 url,What is the URL for your Shiny app?
