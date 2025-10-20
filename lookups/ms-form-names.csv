@@ -5,7 +5,7 @@ form_completed_time,Completion time
 ms_email,Email
 ms_name,Name
 url,What is the URL for your Shiny app?
-app_name,What is the title of your app?
+app_description,What is the title of your app?
 org,What organisation does the app belong to?
 org_other,Please provide the name of your organisation and the acronym you have used.
 update_frequency,How often do you plan to update your app?

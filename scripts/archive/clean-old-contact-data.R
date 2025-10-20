@@ -24,7 +24,7 @@ google <-
   # Rename and reorder columns
   select(
     form_completed_time = "Timestamp",
-    app_name = "App title (human readable title)",
+    app_description = "App title (human readable title)",
     url = "App link (scotland.shinyapps.io/...)",
     org = "Organisation",
     dev_name = "Developer's name",
@@ -60,9 +60,9 @@ google <-
 missing_urls <- 
   google %>%
   filter(is.na(url)) %>%
-  separate_longer_delim(cols = app_name, delim = regex("\\s&\\s")) %>%
+  separate_longer_delim(cols = app_description, delim = regex("\\s&\\s")) %>%
   mutate(url = case_when(
-    is.na(url) ~ paste0("https://scotland.shinyapps.io/", app_name),
+    is.na(url) ~ paste0("https://scotland.shinyapps.io/", app_description),
     TRUE ~ url
   ))
 
