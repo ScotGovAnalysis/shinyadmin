@@ -13,7 +13,10 @@ source(here::here("scripts", "00_setup.R"))
 
 google <- 
   
-  read_csv(here("inputs", "2024-07-16_google-record.csv")) %>%
+  read_csv(
+    here("inputs", "2024-07-16_google-record.csv"),
+    na = c("", "NA", "N/A", "tbc")
+  ) %>%
   
   # Remove empty columns (read_csv gives name in format ...1)
   select(-matches("^\\.\\.\\.\\d+$")) %>% 
