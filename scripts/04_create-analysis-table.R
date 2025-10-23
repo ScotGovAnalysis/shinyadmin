@@ -31,7 +31,8 @@ analysis <-
   )) %>%
   mutate(url_no_date = url_remove_dates(url),
          .after = url) %>%
-  left_join(contacts, by = join_by(url_no_date))
+  left_join(contacts, by = join_by(url_no_date)) %>%
+  select(-url_no_date)
 
 
 # 2 - Complete organisation data ----
