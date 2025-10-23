@@ -1,4 +1,4 @@
-# Name: xx_snapshot-server-app-data.R
+# Name: 01_snapshot-server-data.R
 # Description: Take a snapshot of app data from shinyapps.io and write to ADM
 
 
