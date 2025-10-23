@@ -1,34 +1,32 @@
-# Name: 03_output.R
+# Name: 05_excel-summary.R
 # Description: Save app data to formatted Excel file
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(here)
-library(readr)
-library(dplyr)
-library(janitor)
-library(forcats)
-library(purrr)
-library(writexl)
-library(tidyr)
-
-source(here("R", "get_latest_output.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Read app data ----
 
 apps <-
+  read_table_from_db(
+    config$adm_server,
+    config$database,
+    config$schema,
+    "analysis"
+  ) %>%
   
-  read_rds(get_latest_output("app-data")) %>%
+  # Recode to character - otherwise time added by Excel
+  mutate(record_date = as.character(record_date)) %>%
   
   # Group SG agencies as one organisation
   mutate(
     org_grouped = case_when(
       sg_agency ~ "Scottish Government (inc. agencies)",
       org == "Public Health Scotland" ~ org,
-      !is.na(org) ~ "Other",
-      is.na(org) ~ "Unknown"
+      org == "Unknown" ~ "Unknown",
+      !is.na(org) ~ "Other"
     ),
     org_grouped = factor(org_grouped, 
                          levels = c("Scottish Government (inc. agencies)",
@@ -46,7 +44,7 @@ summary <-
   apps %>%
   group_by(org = org_grouped) %>%
   summarise(n_apps = n(),
-            n_contact_known = sum(contact_known),
+            n_contact_known = sum(!is.na(form_completed_time)),
             .groups = "drop") %>%
   adorn_totals()
 
@@ -66,9 +64,14 @@ out <-
   imap(
     \(x, idx) if (idx == "Summary") {
       x
-    } else {
+    } else if (idx == "Other") {
       x %>% 
         select(-any_of(c("contact_known", "org_grouped"))) %>%
+        arrange(org != "Scottish Government", org, name) %>%
+        relocate(org, org_other, .before = 0)
+    } else {
+      x %>% 
+        select(-any_of(c("contact_known", "org_grouped", "org_other"))) %>%
         arrange(org != "Scottish Government", org, name) %>%
         relocate(org, .before = 0)
     }

@@ -1,34 +1,30 @@
-# Name: xx_clean-manual-record.R
+# Name: clean-old-contact-data.R
 # Description: This code is used to clean the raw data from the old Google form.
 # This form doesn't exist anymore, so this code shouldn't need to be run again 
 # in the future.
 
 
-# 0 - Load packages and functions ----
+# 0 - Run setup script ----
 
-library(readr)
-library(here)
-library(dplyr)
-library(stringr)
-library(tidyr)
-library(lubridate)
-
-source(here("R", "clean_manual_url.R"))
+source(here::here("scripts", "00_setup.R"))
 
 
 # 1 - Read and clean Google survey data ----
 
 google <- 
   
-  read_csv(here("inputs", "2024-07-16_google-record.csv")) %>%
+  read_csv(
+    here("inputs", "2024-07-16_google-record.csv"),
+    na = c("", "NA", "N/A", "tbc")
+  ) %>%
   
   # Remove empty columns (read_csv gives name in format ...1)
   select(-matches("^\\.\\.\\.\\d+$")) %>% 
   
   # Rename and reorder columns
   select(
-    date = "Timestamp",
-    app_name = "App title (human readable title)",
+    form_completed_time = "Timestamp",
+    app_description = "App title (human readable title)",
     url = "App link (scotland.shinyapps.io/...)",
     org = "Organisation",
     dev_name = "Developer's name",
@@ -38,8 +34,7 @@ google <-
     code_url = "Link to code (if available)"
   ) %>%
   
-  # Format date
-  mutate(date = dmy_hms(date)) %>%
+  mutate(form_completed_time = dmy_hms(form_completed_time)) %>%
   
   # Clean URLs
   separate_longer_delim(cols = url, delim = regex("\\nto be changed to\\s")) %>%
@@ -56,7 +51,7 @@ google <-
   
   # Remove duplicates where later record submitted
   group_by(url) %>%
-  filter(n() == 1 | date == max(date)) %>%
+  filter(n() == 1 | form_completed_time == max(form_completed_time)) %>%
   ungroup()
 
 
@@ -65,9 +60,9 @@ google <-
 missing_urls <- 
   google %>%
   filter(is.na(url)) %>%
-  separate_longer_delim(cols = app_name, delim = regex("\\s&\\s")) %>%
+  separate_longer_delim(cols = app_description, delim = regex("\\s&\\s")) %>%
   mutate(url = case_when(
-    is.na(url) ~ paste0("https://scotland.shinyapps.io/", app_name),
+    is.na(url) ~ paste0("https://scotland.shinyapps.io/", app_description),
     TRUE ~ url
   ))
 
@@ -76,12 +71,14 @@ google <-
   filter(!is.na(url)) %>%
   bind_rows(missing_urls)
 
-if (file.exists(here("lookups", "invalid-urls.csv"))) {
+invalid_url_path <- here("lookups", "invalid-urls.csv")
+
+if (file.exists(invalid_url_path)) {
   
   invalid_urls <- 
     google %>% 
     filter(!str_starts(url, "https://scotland.shinyapps.io/")) %>%
-    left_join(read_csv(here("lookups", "invalid-urls.csv")), 
+    left_join(read_csv(invalid_url_path), 
               by = join_by(url == invalid_url)) %>%
     mutate(url = valid_url) %>%
     select(-valid_url)
@@ -96,10 +93,12 @@ if (file.exists(here("lookups", "invalid-urls.csv"))) {
 
 # 3 - Save clean dataset ----
 
-write_rds(
-  google,
-  here("outputs", "2024-07-16_manual-record.rds"),
-  compress = "gz"
+write_dataframe_to_db(
+  config$adm_server,
+  config$database,
+  config$schema,
+  table_name = "contacts_old",
+  dataframe = google
 )
 
 

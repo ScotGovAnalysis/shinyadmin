@@ -20,11 +20,15 @@ The code in this repository is used to assist with administration of the Scottis
 
 ## Process
 
+1.  Create `config.yml` file. 
+ 
+    This file isn't tracked by git, however the expected format can be seen in `config-example.yml`.
+
 ## Output
 
 ## Contact
 
-This repository is maintained by [Alice Hannah](mailto:alice.hannah@gov.scot) and [Tom Wilson](mailto:thomas.wilson@gov.scot).
+This repository is maintained by the [Data Innovation team](mailto:alice.hannah@gov.scot;thomas.wilson@gov.scot).
 
 ## Licence
 

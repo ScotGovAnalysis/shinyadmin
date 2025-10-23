@@ -35,7 +35,7 @@ server_apps <- function(account = "scotland",
     rsconnect::applications(account = account) %>%
     mutate(across(contains("time"), ymd_hms),
            url = str_remove(url, "/$") %>% str_to_lower()) %>%
-    select(-id, -instances, -guid, -title)
+    select(-instances, -guid, -title)
   
   cli::cli_progress_done()
   
@@ -44,10 +44,20 @@ server_apps <- function(account = "scotland",
   }
   
   if (hours_used) {
+    cli::cli_progress_step(
+      msg = "Getting hours used data",
+      msg_done = "Getting hours used data | Complete!"
+    )
+    hours <- app_hours_used(account, back_months)
     apps <- apps %>% 
-      dplyr::mutate(hours_used = app_hours_used(name, account, back_months))
+      dplyr::left_join(hours, by = dplyr::join_by(id == app_id)) %>%
+      dplyr::mutate(total_hours = tidyr::replace_na(total_hours, 0))
+    cli::cli_progress_done()
   }
   
-  tibble::as_tibble(apps)
+  tibble::as_tibble(apps) %>%
+    select(-id) %>%
+    mutate(record_date = lubridate::today(tzone = "UTC"),
+           .before = 0)
   
 }
