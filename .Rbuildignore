@@ -1,0 +1,7 @@
+^shinyadmin\.Rproj$
+^\.Rproj\.user$
+scripts/
+lookups/
+outputs/
+config*
+LICENCE.md

@@ -6,10 +6,10 @@
 #' @return Character vector of "public" or "private".
 #'
 #' @examples
-#' app_visibility("my_app")
+#' \dontrun{app_visibility("my_app")}
 
 app_visibility <- function(app_name, account = "scotland") {
-  
+
   app_name %>%
     purrr::map(
       \(x) {
@@ -24,5 +24,5 @@ app_visibility <- function(app_name, account = "scotland") {
       .progress = progress("Getting app visibility data")
     ) %>%
     purrr::list_c()
-  
+
 }

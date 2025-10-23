@@ -1,0 +1,21 @@
+Package: shinyadmin
+Title: Shiny App Server Administration
+Version: 0.0.0.9000
+Authors@R: 
+    person("Alice", "Hannah", , "alice.hannah@gov.scot", role = c("aut", "cre"))
+Description: Administration of the Scottish Public Sector Shiny Server (scotland.shinyapps.io).
+License: MIT + file LICENCE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    cli,
+    dplyr,
+    lubridate,
+    magrittr,
+    purrr,
+    rlang,
+    rsconnect,
+    stringr,
+    tibble,
+    tidyr
