@@ -9,12 +9,12 @@ source(here::here("scripts", "00_setup.R"))
 
 # 1 - Clean contact data ----
 
-contacts_new <- 
+contacts_new <-
   read_table_from_db(
     config$adm_server,
     config$database,
     config$schema,
-    "contacts_new" 
+    "contacts_new"
   ) %>%
   mutate(url = clean_manual_url(url))
 
@@ -23,10 +23,10 @@ contacts_new <-
 
 accept_orgs <- lookups$orgs %>% filter(ms_form_accepted)
 
-contacts_new <- 
+contacts_new <-
   contacts_new %>%
   mutate(
-    other_org_valid = 
+    other_org_valid =
       str_remove(org_other, "\\s\\(.*\\)$") %in% accept_orgs$org_description,
     org = case_when(
       other_org_valid ~ org_other,
@@ -36,7 +36,7 @@ contacts_new <-
     org = str_remove(org, "\\s\\(.*\\)$")
   ) %>%
   select(-other_org_valid, -response_id)
-  
+
 
 # Flag other orgs for manual review
 
@@ -47,7 +47,7 @@ orgs_to_review <-
   relocate(org_other, url, .before = 0)
 
 if (nrow(orgs_to_review) > 0) {
-  cli::cli_inform(c(
+  cli_inform(c(
     "!" = paste("{n_distinct(orgs_to_review$org_other)} organisation{?s}",
                 "{?is/are} not in the expected list."),
     "i" = "View the {.code orgs_to_review} data frame to review.",
@@ -55,16 +55,16 @@ if (nrow(orgs_to_review) > 0) {
                 "{.file lookups/organisation_lookup.csv}.")
   ))
 }
- 
+
 
 # 2 - Join to old contact data ----
 
-contacts_old <- 
+contacts_old <-
   read_table_from_db(
     config$adm_server,
     config$database,
     config$schema,
-    "contacts_old" 
+    "contacts_old"
   )
 
 contacts_all <-

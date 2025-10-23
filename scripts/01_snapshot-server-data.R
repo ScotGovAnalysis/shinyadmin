@@ -9,8 +9,8 @@ source(here::here("scripts", "00_setup.R"))
 
 # 1 - Get app data from server ----
 
-apps <- server_apps("scotland", 
-                    visibility = TRUE, 
+apps <- server_apps("scotland",
+                    visibility = FALSE,
                     hours_used = TRUE)
 
 
