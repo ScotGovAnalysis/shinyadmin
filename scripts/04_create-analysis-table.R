@@ -24,6 +24,11 @@ analysis <-
     config$schema,
     "server_apps" 
   ) %>%
+  mutate(status = if_else(
+    status %in% c("running", "sleeping"),
+    "active",
+    status
+  )) %>%
   mutate(url_no_date = url_remove_dates(url),
          .after = url) %>%
   left_join(contacts, by = join_by(url_no_date))
@@ -37,7 +42,10 @@ analysis <-
   mutate(url_prefix = extract_org_prefix(name)) %>%
   left_join(lookups$orgs %>% select(org_acronym, org_description), 
             by = join_by(url_prefix == org_acronym)) %>%
-  mutate(org = if_else(is.na(org), org_description, org)) %>%
+  mutate(org = case_when(
+    is.na(org) & !is.na(org_description) ~ org_description, 
+    is.na(org) ~ "Unknown",
+    .default = org)) %>%
   select(-org_description, -url_prefix)
   
 # Match on sg_agency flag from org lookup
