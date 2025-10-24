@@ -43,3 +43,4 @@ inputs/
 lookups/invalid-urls.csv
 *.html
 config.yml
+.Rproj.user

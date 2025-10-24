@@ -4,34 +4,23 @@
 
 # 1 - Load packages ----
 
-library(rsconnect)
+library(shinyadmin)
 library(dplyr)
-library(lubridate)
 library(stringr)
 library(here)
 library(readr)
-library(here)
 library(yaml)
+library(cli)
 library(purrr)
 library(tidyr)
 library(lubridate)
 library(RtoSQLServer)
 library(janitor)
-library(forcats)
 library(readxl)
 library(writexl)
-library(tibble)
 
 
-# 2 - Load functions ----
-
-walk(
-  list.files(here("R"), pattern = "*.R$", full.names = TRUE),
-  source
-)
-
-
-# 3 - Set config parameters ----
+# 2 - Set config parameters ----
 
 config <- c(
   read_yaml(here("config.yml")),
@@ -40,12 +29,12 @@ config <- c(
 )
 
 
-# 4 - Read lookup files ----
+# 3 - Read lookup files ----
 
 lookups <- list(
-  ms_form_names = read_csv(here("lookups", "ms-form-names.csv"), 
+  ms_form_names = read_csv(here("lookups", "ms-form-names.csv"),
                            show_col_types = FALSE),
-  orgs  = read_csv(here("lookups", "organisation_lookup.csv"), 
+  orgs  = read_csv(here("lookups", "organisation_lookup.csv"),
                    show_col_types = FALSE)
 )
 

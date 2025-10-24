@@ -8,8 +8,8 @@
 #' @examples extract_org_prefix("sg-app")
 
 extract_org_prefix <- function(name) {
-  
+
   tolower(name) %>%
-    word(1, sep = regex("[_-]"))
-  
+    stringr::word(1, sep = stringr::regex("[_-]"))
+
 }
