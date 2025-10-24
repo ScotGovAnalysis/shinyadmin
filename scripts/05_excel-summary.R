@@ -16,24 +16,17 @@ apps <-
     config$schema,
     "analysis"
   ) %>%
-  
+
   # Recode to character - otherwise time added by Excel
   mutate(record_date = as.character(record_date)) %>%
-  
-  # Group SG agencies as one organisation
+
+  # Set order for org_grouped
   mutate(
-    org_grouped = case_when(
-      sg_agency ~ "Scottish Government (inc. agencies)",
-      org == "Public Health Scotland" ~ org,
-      org == "Unknown" ~ "Unknown",
-      !is.na(org) ~ "Other"
-    ),
-    org_grouped = factor(org_grouped, 
+    org_grouped = factor(org_grouped,
                          levels = c("Scottish Government (inc. agencies)",
                                     "Public Health Scotland",
                                     "Other",
-                                    "Unknown")),
-    org = replace_na(org, "Unknown")
+                                    "Unknown"))
   ) %>%
   select(-sg_agency)
 
@@ -51,7 +44,7 @@ summary <-
 
 # 3 - List of data to save to Excel ----
 
-out <- 
+out <-
   c(
     list(Summary = summary),
     split(apps, apps$org_grouped)
@@ -65,12 +58,12 @@ out <-
     \(x, idx) if (idx == "Summary") {
       x
     } else if (idx == "Other") {
-      x %>% 
+      x %>%
         select(-any_of(c("contact_known", "org_grouped"))) %>%
         arrange(org != "Scottish Government", org, name) %>%
         relocate(org, org_other, .before = 0)
     } else {
-      x %>% 
+      x %>%
         select(-any_of(c("contact_known", "org_grouped", "org_other"))) %>%
         arrange(org != "Scottish Government", org, name) %>%
         relocate(org, .before = 0)

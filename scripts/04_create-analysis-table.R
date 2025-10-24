@@ -17,12 +17,12 @@ contacts <-
     "contacts_all"
   )
 
-analysis <- 
+analysis <-
   read_table_from_db(
     config$adm_server,
     config$database,
     config$schema,
-    "server_apps" 
+    "server_apps"
   ) %>%
   mutate(status = if_else(
     status %in% c("running", "sleeping"),
@@ -41,26 +41,34 @@ analysis <-
 analysis <-
   analysis %>%
   mutate(url_prefix = extract_org_prefix(name)) %>%
-  left_join(lookups$orgs %>% select(org_acronym, org_description), 
+  left_join(lookups$orgs %>% select(org_acronym, org_description),
             by = join_by(url_prefix == org_acronym)) %>%
   mutate(org = case_when(
-    is.na(org) & !is.na(org_description) ~ org_description, 
+    is.na(org) & !is.na(org_description) ~ org_description,
     is.na(org) ~ "Unknown",
     .default = org)) %>%
   select(-org_description, -url_prefix)
-  
-# Match on sg_agency flag from org lookup
 
-agency_lookup <- 
-  lookups %>% 
+# Add organisation groups (SG agencies, PHS, Other, Unknown)
+
+agency_lookup <-
+  lookups %>%
   pluck("orgs") %>%
-  select(org_description, sg_agency) %>% 
+  select(org_description, sg_agency) %>%
   distinct()
 
 analysis <-
   analysis %>%
   left_join(agency_lookup, by = join_by(org == org_description)) %>%
-  relocate(sg_agency, .after = org_other)
+  relocate(sg_agency, .after = org_other) %>%
+  mutate(
+    org_grouped = case_when(
+      sg_agency ~ "Scottish Government (inc. agencies)",
+      org %in% c("Public Health Scotland", "Unknown") ~ org,
+      !is.na(org) ~ "Other"
+    ),
+    .after = org
+  )
 
 
 # 3 - Write to ADM ----
