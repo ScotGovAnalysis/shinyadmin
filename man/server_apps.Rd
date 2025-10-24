@@ -27,10 +27,6 @@ Tibble.
 \description{
 List deployed Shiny Server apps
 }
-\details{
-Note that including additional data (e.g. visibility data) will
-mean the function takes longer to run.
-}
 \examples{
 \dontrun{server_apps()}
 }

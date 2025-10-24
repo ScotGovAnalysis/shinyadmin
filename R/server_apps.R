@@ -1,8 +1,5 @@
 #' List deployed Shiny Server apps
 #'
-#' @details Note that including additional data (e.g. visibility data) will
-#' mean the function takes longer to run.
-#'
 #' @param account Name of Shiny Server account where app is deployed.
 #' @param visibility Logical: Should app visibility data be included?
 #' @param hours_used Logical: Should hours used data be included?
