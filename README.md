@@ -1,4 +1,4 @@
-# Shiny Server Analysis
+# shinyadmin
 
 The code in this repository is used to assist with administration of the Scottish Public Sector [shinyapps.io](https://www.shinyapps.io/) account (scotland.shinyapps.io). 
 
@@ -32,4 +32,6 @@ This repository is maintained by the [Data Innovation team](mailto:alice.hannah@
 
 ## Licence
 
-[MIT License](LICENCE)
+Unless stated otherwise, the codebase is released under [the MIT License](LICENCE). This covers both the codebase and any sample code in the documentation.
+
+The documentation is [© Crown copyright](http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/) and available under the terms of the [Open Government 3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) licence.
