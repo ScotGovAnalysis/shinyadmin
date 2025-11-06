@@ -46,6 +46,7 @@ analysis <-
   mutate(org = case_when(
     is.na(org) & !is.na(org_description) ~ org_description,
     is.na(org) ~ "Unknown",
+    org == "Scottish Natural Heritage" ~ "NatureScot",
     .default = org)) %>%
   select(-org_description, -url_prefix)
 
