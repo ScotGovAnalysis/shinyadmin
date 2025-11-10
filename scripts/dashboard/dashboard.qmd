@@ -45,7 +45,7 @@ If you have any questions or issues, please [contact Alice Hannah](mailto:alice.
 
 ## Row
 
-```{r}
+```{r, vb_total_apps}
 #| content: valuebox
 #| title: "Total apps"
 list(
@@ -55,7 +55,7 @@ list(
 )
 ```
 
-```{r}
+```{r, vb_sg_apps}
 #| content: valuebox
 #| title: "Apps belonging to Scottish Government and its agencies"
 list(
@@ -65,7 +65,7 @@ list(
 )
 ```
 
-```{r}
+```{r, vb_new_apps}
 #| content: valuebox
 #| title: "New apps in the last month"
 list(
@@ -75,7 +75,7 @@ list(
 )
 ```
 
-```{r}
+```{r, vb_contacts}
 #| content: valuebox
 #| title: "Number of contacts known"
 list(
@@ -88,7 +88,7 @@ list(
 
 ## Row
 
-```{r table}
+```{r summary_table}
 apps %>%
   group_by(org_grouped, org) %>%
   mutate(apps = 1) %>%
@@ -136,7 +136,7 @@ For more detailed data, including contact details for specific apps, please [con
 
 ## Row {.tabset}
 
-```{r}
+```{r, sg_apps}
 #| title: Scottish Government (inc agencies)
 apps %>% 
   filter(str_starts(org_grouped, "Scottish Government")) %>%
@@ -149,7 +149,7 @@ apps %>%
   app_table()
 ```
 
-```{r}
+```{r, phs_apps}
 #| title: Public Health Scotland
 apps %>% 
   filter(org_grouped == "Public Health Scotland") %>%
@@ -158,7 +158,7 @@ apps %>%
   app_table()
 ```
 
-```{r}
+```{r, other_apps}
 #| title: Other
 apps %>% 
   filter(org_grouped == "Other") %>%
@@ -168,7 +168,7 @@ apps %>%
   app_table()
 ```
 
-```{r}
+```{r, unknown_apps}
 #| title: Unknown
 apps %>% 
   filter(org_grouped == "Unknown") %>%
@@ -177,7 +177,7 @@ apps %>%
   app_table()
 ```
 
-```{r}
+```{r, inactive_apps}
 #| title: Inactive
 inactive %>% 
   arrange(org_grouped, org != "Scottish Government", url) %>%
@@ -201,7 +201,7 @@ The following data was collected as part of the new contact form, active from No
   We are interested in understanding what motivated you to use Shiny over other methods of publishing.
 :::
 
-```{r}
+```{r, why_shiny}
 apps %>% 
   filter(!is.na(why_shiny)) %>%
   select(url, org, why_shiny) %>%
