@@ -9,7 +9,7 @@ app_table <- function(data) {
 
   data <- data %>%
     dplyr::select(dplyr::any_of(
-      c("url", "org", "updated_time", "total_hours",
+      c("url", "org", "status", "updated_time", "total_hours",
         "contact_known", "form_completed_time", "why_shiny")
     ))
 
@@ -19,6 +19,8 @@ app_table <- function(data) {
         gt::md("**App**"),
       dplyr::matches("org") ~
         gt::md("**Organisation**"),
+      dplyr::matches("status") ~
+        gt::md("**Status**"),
       dplyr::matches("updated_time") ~
         gt::md("**App last updated**"),
       dplyr::matches("total_hours") ~
