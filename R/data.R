@@ -10,3 +10,21 @@
 #' }
 
 "ms_form_names"
+
+
+#' Organisations
+#'
+#' A lookup dataset for organisations with deployed apps.
+#'
+#' @format
+#' A tibble with 4 columns:
+#' \describe{
+#'   \item{org_acronym}{Organisation acronym used as prefix in app name}
+#'   \item{org_name}{Organisation name}
+#'   \item{sg_agency}{Logical. Is the organisation the Scottish Government or
+#'   one of its agencies?}
+#'   \item{ms_form_accepted}{Logical. Is the organisation a currently accepted
+#'   value in the Microsoft Form?}
+#' }
+
+"orgs"
