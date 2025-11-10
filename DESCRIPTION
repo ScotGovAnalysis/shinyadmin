@@ -12,6 +12,7 @@ Imports:
     cli,
     dplyr,
     gt,
+    janitor,
     lubridate,
     magrittr,
     purrr,

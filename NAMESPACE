@@ -2,6 +2,7 @@
 
 export(app_table)
 export(clean_manual_url)
+export(excel_output)
 export(extract_org_prefix)
 export(org_grouped_to_factor)
 export(progress)
