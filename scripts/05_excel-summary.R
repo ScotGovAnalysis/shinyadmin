@@ -21,13 +21,7 @@ apps <-
   mutate(record_date = as.character(record_date)) %>%
 
   # Set order for org_grouped
-  mutate(
-    org_grouped = factor(org_grouped,
-                         levels = c("Scottish Government (inc. agencies)",
-                                    "Public Health Scotland",
-                                    "Other",
-                                    "Unknown"))
-  ) %>%
+  mutate(org_grouped = org_grouped_to_factor(org_grouped)) %>%
   select(-sg_agency)
 
 
