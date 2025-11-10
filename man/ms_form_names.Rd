@@ -5,15 +5,16 @@
 \alias{ms_form_names}
 \title{Microsoft Form Names}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 2 columns.
+A tibble with 2 columns:
+\describe{
+\item{new}{Clean snakecase names to use in the analysis dataset}
+\item{old}{Exact question wording in the MS form}
+}
 }
 \usage{
 ms_form_names
 }
 \description{
 A lookup dataset for renaming columns in the Microsoft Forms contact dataset.
-Contains two columns: \code{new} and \code{old}. The \code{old} column should match the
-question wording in the MS form exactly. The \code{new} column contains clean
-snakecase names to use in the analysis dataset.
 }
 \keyword{datasets}
