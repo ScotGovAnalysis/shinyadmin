@@ -21,13 +21,13 @@ contacts_new <-
 
 # Consolidate 'accepted' organisations into 1 column (`org`)
 
-accept_orgs <- lookups$orgs %>% filter(ms_form_accepted)
+accept_orgs <- orgs %>% filter(ms_form_accepted)
 
 contacts_new <-
   contacts_new %>%
   mutate(
     other_org_valid =
-      str_remove(org_other, "\\s\\(.*\\)$") %in% accept_orgs$org_description,
+      str_remove(org_other, "\\s\\(.*\\)$") %in% accept_orgs$org_name,
     org = case_when(
       other_org_valid ~ org_other,
       .default = org
@@ -52,7 +52,7 @@ if (nrow(orgs_to_review) > 0) {
                 "{?is/are} not in the expected list."),
     "i" = "View the {.code orgs_to_review} data frame to review.",
     "i" = paste("If the organisation should be accepted, add it to",
-                "{.file lookups/organisation_lookup.csv}.")
+                "{.file data-raw/orgs.R}.")
   ))
 }
 

@@ -41,26 +41,25 @@ analysis <-
 analysis <-
   analysis %>%
   mutate(url_prefix = extract_org_prefix(name)) %>%
-  left_join(lookups$orgs %>% select(org_acronym, org_description),
+  left_join(orgs %>% select(org_acronym, org_name),
             by = join_by(url_prefix == org_acronym)) %>%
   mutate(org = case_when(
-    is.na(org) & !is.na(org_description) ~ org_description,
+    is.na(org) & !is.na(org_name) ~ org_name,
     is.na(org) ~ "Unknown",
     org == "Scottish Natural Heritage" ~ "NatureScot",
     .default = org)) %>%
-  select(-org_description, -url_prefix)
+  select(-org_name, -url_prefix)
 
 # Add organisation groups (SG agencies, PHS, Other, Unknown)
 
 agency_lookup <-
-  lookups %>%
-  pluck("orgs") %>%
-  select(org_description, sg_agency) %>%
+  orgs %>%
+  select(org_name, sg_agency) %>%
   distinct()
 
 analysis <-
   analysis %>%
-  left_join(agency_lookup, by = join_by(org == org_description)) %>%
+  left_join(agency_lookup, by = join_by(org == org_name)) %>%
   relocate(sg_agency, .after = org_other) %>%
   mutate(
     org_grouped = case_when(
