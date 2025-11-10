@@ -19,4 +19,6 @@ Imports:
     rsconnect,
     stringr,
     tibble,
-    tidyr
+    tidyr,
+    tools,
+    quarto
