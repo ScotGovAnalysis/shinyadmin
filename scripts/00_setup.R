@@ -28,14 +28,4 @@ config <- c(
 )
 
 
-# 3 - Read lookup files ----
-
-lookups <- list(
-  ms_form_names = read_csv(here("lookups", "ms-form-names.csv"),
-                           show_col_types = FALSE),
-  orgs  = read_csv(here("lookups", "organisation_lookup.csv"),
-                   show_col_types = FALSE)
-)
-
-
 ### END OF SCRIPT ###
