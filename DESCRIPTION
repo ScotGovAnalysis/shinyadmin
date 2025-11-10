@@ -11,6 +11,8 @@ RoxygenNote: 7.3.2
 Imports: 
     cli,
     dplyr,
+    gt,
+    janitor,
     lubridate,
     magrittr,
     purrr,
@@ -18,4 +20,6 @@ Imports:
     rsconnect,
     stringr,
     tibble,
-    tidyr
+    tidyr,
+    tools,
+    quarto

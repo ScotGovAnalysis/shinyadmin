@@ -55,6 +55,12 @@ These are stored in the `outputs/` folder.
 
 1.  An Excel spreadsheet containing all available data, split by organisation.
 
+    * Script 5 produces this file containing information for all organisations. 
+    To produce this file for one organisation only, use the `excel_output()` function and
+    specify the `org_group` argument.
+
+2. A Quarto dashboard containing a more user-friendly summary and detailed breakdown of apps.
+
 Any additional analysis should be carried out using the `analysis` table on ADM.
 
 

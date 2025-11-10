@@ -1,0 +1,211 @@
+---
+title: "shinyadmin"
+format: 
+  dashboard:
+    scrolling: true
+    theme: [default, styles.scss]
+    embed-resources: true
+    html-table-processing: none 
+---
+
+```{r setup}
+source(here::here("scripts", "00_setup.R"))
+
+apps <-
+  read_table_from_db(
+    config$adm_server,
+    config$database,
+    config$schema,
+    "analysis"
+  ) %>%
+  mutate(
+    org_grouped = org_grouped_to_factor(org_grouped),
+    sg_app = str_starts(org_grouped, "Scottish Government"),
+    new_app = created_time >= (today() - months(1)),
+    contact_known = !is.na(contact_form),
+    new_form_contact = !is.na(contact_form) & contact_form == "new",
+    total_hours = round_half_up(total_hours, 1)
+  )
+
+inactive <- apps %>% filter(status != "active")
+apps     <- apps %>% filter(status == "active")
+
+record_date <- unique(apps$record_date)
+```
+
+# Summary 
+
+## Row
+
+::: {.card fill="false"}
+The data in this dashboard is correct as of `r format(record_date, "%d %B %Y")`.
+
+If you have any questions or issues, please [contact Alice Hannah](mailto:alice.hannah@gov.scot).
+:::
+
+## Row
+
+```{r, vb_total_apps}
+#| content: valuebox
+#| title: "Total apps"
+list(
+  icon = "hash",
+  color = "primary",
+  value = nrow(apps)
+)
+```
+
+```{r, vb_sg_apps}
+#| content: valuebox
+#| title: "Apps belonging to Scottish Government and its agencies"
+list(
+  icon = "star-fill",
+  color = "primary",
+  value = sum(apps$sg_app)
+)
+```
+
+```{r, vb_new_apps}
+#| content: valuebox
+#| title: "New apps in the last month"
+list(
+  icon = "plus-lg",
+  color = "primary",
+  value = sum(apps$new_app)
+)
+```
+
+```{r, vb_contacts}
+#| content: valuebox
+#| title: "Number of contacts known"
+list(
+  icon = "people-fill",
+  color = "primary",
+  value = sum(apps$contact_known)
+)
+```
+
+
+## Row
+
+```{r summary_table}
+apps %>%
+  group_by(org_grouped, org) %>%
+  mutate(apps = 1) %>%
+  summarise(
+    across(
+      c("apps", "new_app", "contact_known", "new_form_contact"),
+      sum
+    ),
+    .groups = "drop"
+  ) %>%
+  arrange(org_grouped, desc(apps)) %>%
+  select(-org_grouped) %>%
+  adorn_totals() %>%
+  gt() %>%
+  cols_label(
+    org = "Organisation",
+    apps = "Number of apps",
+    new_app = "Number of new apps in the last month",
+    contact_known = "Number of contacts known",
+    new_form_contact = "Number of contacts from new form"
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      rows = org == "Total"
+    )
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels()
+  ) %>%
+  opt_row_striping(row_striping = FALSE) %>%
+  tab_options(table.width = pct(100))
+```
+
+
+# App List
+
+::: {.card fill="false"}
+The data in this dashboard is correct as of `r format(record_date, "%d %B %Y")`.
+
+For more detailed data, including contact details for specific apps, please [contact Alice Hannah](mailto:alice.hannah@gov.scot).
+:::
+
+
+## Row {.tabset}
+
+```{r, sg_apps}
+#| title: Scottish Government (inc agencies)
+apps %>% 
+  filter(str_starts(org_grouped, "Scottish Government")) %>%
+  select(url, org, updated_time, total_hours, form_completed_time) %>%
+  group_by(org) %>%
+  mutate(n_apps = n()) %>%
+  ungroup() %>%
+  arrange(desc(n_apps), url) %>%
+  select(-n_apps) %>%
+  app_table()
+```
+
+```{r, phs_apps}
+#| title: Public Health Scotland
+apps %>% 
+  filter(org_grouped == "Public Health Scotland") %>%
+  select(url, org, updated_time, total_hours, form_completed_time) %>%
+  arrange(url) %>%
+  app_table()
+```
+
+```{r, other_apps}
+#| title: Other
+apps %>% 
+  filter(org_grouped == "Other") %>%
+  arrange(org) %>%
+  select(url, org, updated_time, total_hours, form_completed_time) %>%
+  arrange(org, url) %>%
+  app_table()
+```
+
+```{r, unknown_apps}
+#| title: Unknown
+apps %>% 
+  filter(org_grouped == "Unknown") %>%
+  select(url, org, updated_time, total_hours, form_completed_time) %>%
+  arrange(url) %>%
+  app_table()
+```
+
+```{r, inactive_apps}
+#| title: Inactive
+inactive %>% 
+  arrange(org_grouped, org != "Scottish Government", url) %>%
+  select(url, org, status, updated_time, total_hours, form_completed_time) %>%
+  app_table()
+```
+
+
+# Why Shiny?
+
+::: {.card fill="false"}
+The data in this dashboard is correct as of `r format(record_date, "%d %B %Y")`.
+
+If you have any questions or issues, please [contact Alice Hannah](mailto:alice.hannah@gov.scot).
+:::
+
+::: {.card fill="false"}
+The following data was collected as part of the new contact form, active from November 2025. Respondents from the Scottish Government and its agencies were asked:
+
+> Why did you decide to use Shiny? 
+  We are interested in understanding what motivated you to use Shiny over other methods of publishing.
+:::
+
+```{r, why_shiny}
+apps %>% 
+  filter(!is.na(why_shiny)) %>%
+  select(url, org, why_shiny) %>%
+  arrange(org != "Scottish Government", org, url) %>%
+  app_table()
+```
+
