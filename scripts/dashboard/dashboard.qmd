@@ -181,7 +181,7 @@ apps %>%
 #| title: Inactive
 inactive %>% 
   arrange(org_grouped, org != "Scottish Government", url) %>%
-  select(url, org, updated_time, total_hours, form_completed_time) %>%
+  select(url, org, status, updated_time, total_hours, form_completed_time) %>%
   app_table()
 ```
 
