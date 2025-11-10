@@ -18,6 +18,7 @@ library(RtoSQLServer)
 library(janitor)
 library(readxl)
 library(writexl)
+library(gt)
 
 
 # 2 - Set config parameters ----
