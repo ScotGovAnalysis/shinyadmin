@@ -5,3 +5,4 @@ lookups/
 outputs/
 config*
 LICENCE.md
+^data-raw$

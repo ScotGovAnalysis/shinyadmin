@@ -23,3 +23,6 @@ Imports:
     tidyr,
     tools,
     quarto
+Depends: 
+    R (>= 3.5)
+LazyData: true

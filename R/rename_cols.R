@@ -24,6 +24,6 @@ rename_cols <- function(df, names_lookup) {
   }
 
   df %>%
-    dplyr::rename(!!!tibble::deframe(names_lookup))
+    dplyr::rename(tibble::deframe(names_lookup))
 
 }

@@ -16,29 +16,31 @@ contacts_new <-
     config$schema,
     "contacts_new"
   ) %>%
-  mutate(url = clean_manual_url(url))
+  mutate(url = clean_manual_url(url)) %>%
+  select(-response_id)
 
 
 # Consolidate 'accepted' organisations into 1 column (`org`)
 
-accept_orgs <- lookups$orgs %>% filter(ms_form_accepted)
+accept_orgs <- orgs %>% filter(ms_form_accepted)
 
 contacts_new <-
   contacts_new %>%
   mutate(
-    other_org_valid =
-      str_remove(org_other, "\\s\\(.*\\)$") %in% accept_orgs$org_description,
-    org = case_when(
-      other_org_valid ~ org_other,
-      .default = org
-    ),
-    org_other = if_else(other_org_valid, NA_character_, org_other),
-    org = str_remove(org, "\\s\\(.*\\)$")
-  ) %>%
-  select(-other_org_valid, -response_id)
+    org =
+      case_when(
+        str_detect(org_other, "NatureScot") ~ "NatureScot",
+        org_other %in% accept_orgs$org_name ~ org_other,
+        .default = org
+      ) %>%
+      str_remove("\\s\\(.*\\)$"),
+    org_other = if_else(org == "Other", org_other, NA_character_)
+  )
+
+rm(accept_orgs)
 
 
-# Flag other orgs for manual review
+# Flag 'other' organisations for manual review
 
 orgs_to_review <-
   contacts_new %>%
@@ -52,7 +54,7 @@ if (nrow(orgs_to_review) > 0) {
                 "{?is/are} not in the expected list."),
     "i" = "View the {.code orgs_to_review} data frame to review.",
     "i" = paste("If the organisation should be accepted, add it to",
-                "{.file lookups/organisation_lookup.csv}.")
+                "{.file data-raw/orgs.R}.")
   ))
 }
 

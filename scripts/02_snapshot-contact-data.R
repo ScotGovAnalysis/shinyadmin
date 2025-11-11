@@ -9,9 +9,9 @@ source(here::here("scripts", "00_setup.R"))
 
 # 1 - Read raw data from MS Form excel file ----
 
-contacts <- 
+contacts <-
   read_xlsx(config$ms_form_path) %>%
-  rename_cols(lookups$ms_form_names) %>%
+  rename_cols(ms_form_names) %>%
   select(-starts_with("ms")) %>%
   mutate(form_completed_time = ymd_hms(form_completed_time),
          across(!matches("time"), as.character))

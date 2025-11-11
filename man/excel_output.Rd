@@ -11,7 +11,7 @@ excel_output(analysis_table, org_group = "all")
 
 \item{org_group}{Character. Either "all" to include all organisations in the
 output, or an organisation group that appears in
-\code{analysis_table$org_grouped}.}
+\code{analysis_table$org_group}.}
 }
 \value{
 Named list of data frames, that when using \code{writexl::write_xlsx},
