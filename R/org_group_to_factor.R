@@ -1,9 +1,9 @@
 #' Convert grouped organisation data to factor (for sorting)
 #'
-#' @param org_grouped Character vector of grouped organisations.
+#' @param org_group Character vector of grouped organisations.
 #' See Details for accepted values.
 #'
-#' @details Accepted values in `org_grouped`:
+#' @details Accepted values in `org_group`:
 #' * Scottish Government (inc. agencies)
 #' * Public Health Scotland
 #' * Other
@@ -12,23 +12,23 @@
 #' @return Factor.
 #' @export
 
-org_grouped_to_factor <- function(org_grouped) {
+org_group_to_factor <- function(org_group) {
 
   groups <- c("Scottish Government (inc. agencies)",
               "Public Health Scotland",
               "Other",
               "Unknown")
 
-  extra <- setdiff(unique(org_grouped), groups)
+  extra <- setdiff(unique(org_group), groups)
 
-  if (any(!org_grouped %in% groups)) {
+  if (any(!org_group %in% groups)) {
     cli::cli_abort(c(
-      "x" = paste("{.arg org_grouped} must only contain following values:",
+      "x" = paste("{.arg org_group} must only contain following values:",
                   "{.str {groups}}."),
       "i" = "{length(extra)} unexpected value{?s} found: {.str {extra}}."
     ))
   }
 
-  factor(org_grouped, levels = groups)
+  factor(org_group, levels = groups)
 
 }

@@ -37,7 +37,8 @@ analysis <-
 
 # 2 - Complete organisation data ----
 
-# Use app name prefix to derive organisation
+# Use app name prefix to derive organisation (where contact data not present)
+
 analysis <-
   analysis %>%
   mutate(url_prefix = extract_org_prefix(name)) %>%
@@ -46,29 +47,19 @@ analysis <-
   mutate(org = case_when(
     is.na(org) & !is.na(org_name) ~ org_name,
     is.na(org) ~ "Unknown",
-    org == "Scottish Natural Heritage" ~ "NatureScot",
     .default = org)) %>%
   select(-org_name, -url_prefix)
 
 # Add organisation groups (SG agencies, PHS, Other, Unknown)
 
-agency_lookup <-
-  orgs %>%
-  select(org_name, sg_agency) %>%
-  distinct()
-
 analysis <-
   analysis %>%
-  left_join(agency_lookup, by = join_by(org == org_name)) %>%
-  relocate(sg_agency, .after = org_other) %>%
-  mutate(
-    org_grouped = case_when(
-      sg_agency ~ "Scottish Government (inc. agencies)",
-      org %in% c("Public Health Scotland", "Unknown") ~ org,
-      !is.na(org) ~ "Other"
-    ),
-    .after = org
-  )
+  left_join(
+    orgs %>% select(org_name, org_group) %>% distinct(),
+    by = join_by(org == org_name)
+  ) %>%
+  mutate(org_group = replace_na(org_group, "Unknown")) %>%
+  relocate(org_group, .after = org)
 
 
 # 3 - Write to ADM ----

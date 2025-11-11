@@ -21,8 +21,8 @@
 #' \describe{
 #'   \item{org_acronym}{Organisation acronym used as prefix in app name}
 #'   \item{org_name}{Organisation name}
-#'   \item{sg_agency}{Logical. Is the organisation the Scottish Government or
-#'   one of its agencies?}
+#'   \item{org_group}{Organisation group (groups Scottish Government with its
+#'   agencies)}
 #'   \item{ms_form_accepted}{Logical. Is the organisation a currently accepted
 #'   value in the Microsoft Form?}
 #' }

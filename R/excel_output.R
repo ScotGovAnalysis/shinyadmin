@@ -3,7 +3,7 @@
 #' @param analysis_table Data frame of app data.
 #' @param org_group Character. Either "all" to include all organisations in the
 #'  output, or an organisation group that appears in
-#'  `analysis_table$org_grouped`.
+#'  `analysis_table$org_group`.
 #'
 #' @return Named list of data frames, that when using `writexl::write_xlsx`,
 #'  will be sheets in an Excel file.
@@ -11,12 +11,14 @@
 
 excel_output <- function(analysis_table, org_group = "all") {
 
-  if (org_group != "all" & !org_group %in% analysis_table$org_group) {
+  org_group_arg <- org_group
+
+  if (org_group_arg != "all" & !org_group_arg %in% analysis_table$org_group) {
     cli::cli_abort(c(
       "x" = paste("{.arg org_group} must be {.str all}",
                   "or a valid organisation group."),
       "i" = paste("There are no apps for {.str {org_group}} in",
-                  "{.arg analysis_table$org_grouped}.")
+                  "{.arg analysis_table$org_group}.")
     ))
   }
 
@@ -27,24 +29,23 @@ excel_output <- function(analysis_table, org_group = "all") {
     # Recode to character - otherwise time added by Excel
     dplyr::mutate(record_date = as.character(.data$record_date)) %>%
 
-    # Set order for org_grouped
-    dplyr::mutate(org_grouped = org_grouped_to_factor(.data$org_grouped)) %>%
-    dplyr::select(-"sg_agency") %>%
+    # Set order for org_group
+    dplyr::mutate(org_group = org_group_to_factor(.data$org_group)) %>%
 
-    # Filter for org_grouped if provided
+    # Filter for org_group if provided
     dplyr::filter(
-      if (org_group != "all") .data$org_grouped == org_group else TRUE
+      if (org_group_arg != "all") .data$org_group == org_group_arg else TRUE
     )
 
 
   # Summary by organisation ----
 
-  if (org_group == "all") {
+  if (org_group_arg == "all") {
 
     summary <-
       apps %>%
       dplyr::select(-"org") %>%
-      dplyr::rename(org = .data$org_grouped) %>%
+      dplyr::rename(org = .data$org_group) %>%
       dplyr::group_by(.data$org) %>%
       dplyr::summarise(n_apps_active   = sum(.data$status == "active"),
                        n_apps_inactive = sum(.data$status != "active"),
@@ -58,8 +59,8 @@ excel_output <- function(analysis_table, org_group = "all") {
 
   out <-
     c(
-      if (org_group == "all") list(Summary = summary),
-      split(apps, apps$org_grouped)
+      if (org_group_arg == "all") list(Summary = summary),
+      split(apps, apps$org_group)
     ) %>%
     purrr::discard(\(x) nrow(x) == 0) %>%
     purrr::set_names(
@@ -72,7 +73,7 @@ excel_output <- function(analysis_table, org_group = "all") {
         x
       } else if (idx == "Other") {
         x %>%
-          dplyr::select(-dplyr::any_of(c("contact_known", "org_grouped"))) %>%
+          dplyr::select(-dplyr::any_of(c("contact_known", "org_group"))) %>%
           dplyr::arrange(
             .data$org != "Scottish Government", .data$org, .data$name
           ) %>%
@@ -80,7 +81,7 @@ excel_output <- function(analysis_table, org_group = "all") {
       } else {
         x %>%
           dplyr::select(
-            -dplyr::any_of(c("contact_known", "org_grouped", "org_other"))
+            -dplyr::any_of(c("contact_known", "org_group", "org_other"))
           ) %>%
           dplyr::arrange(
             .data$org != "Scottish Government", .data$org, .data$name

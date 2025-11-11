@@ -19,8 +19,8 @@ apps <-
     "analysis"
   ) %>%
   mutate(
-    org_grouped = org_grouped_to_factor(org_grouped),
-    sg_app = str_starts(org_grouped, "Scottish Government"),
+    org_group = org_group_to_factor(org_group),
+    sg_app = str_starts(org_group, "Scottish Government"),
     new_app = created_time >= (today() - months(1)),
     contact_known = !is.na(contact_form),
     new_form_contact = !is.na(contact_form) & contact_form == "new",
@@ -90,7 +90,7 @@ list(
 
 ```{r summary_table}
 apps %>%
-  group_by(org_grouped, org) %>%
+  group_by(org_group, org) %>%
   mutate(apps = 1) %>%
   summarise(
     across(
@@ -99,8 +99,8 @@ apps %>%
     ),
     .groups = "drop"
   ) %>%
-  arrange(org_grouped, desc(apps)) %>%
-  select(-org_grouped) %>%
+  arrange(org_group, desc(apps)) %>%
+  select(-org_group) %>%
   adorn_totals() %>%
   gt() %>%
   cols_label(
@@ -139,7 +139,7 @@ For more detailed data, including contact details for specific apps, please [con
 ```{r, sg_apps}
 #| title: Scottish Government (inc agencies)
 apps %>% 
-  filter(str_starts(org_grouped, "Scottish Government")) %>%
+  filter(str_starts(org_group, "Scottish Government")) %>%
   select(url, org, updated_time, total_hours, form_completed_time) %>%
   group_by(org) %>%
   mutate(n_apps = n()) %>%
@@ -152,7 +152,7 @@ apps %>%
 ```{r, phs_apps}
 #| title: Public Health Scotland
 apps %>% 
-  filter(org_grouped == "Public Health Scotland") %>%
+  filter(org_group == "Public Health Scotland") %>%
   select(url, org, updated_time, total_hours, form_completed_time) %>%
   arrange(url) %>%
   app_table()
@@ -161,7 +161,7 @@ apps %>%
 ```{r, other_apps}
 #| title: Other
 apps %>% 
-  filter(org_grouped == "Other") %>%
+  filter(org_group == "Other") %>%
   arrange(org) %>%
   select(url, org, updated_time, total_hours, form_completed_time) %>%
   arrange(org, url) %>%
@@ -171,7 +171,7 @@ apps %>%
 ```{r, unknown_apps}
 #| title: Unknown
 apps %>% 
-  filter(org_grouped == "Unknown") %>%
+  filter(org_group == "Unknown") %>%
   select(url, org, updated_time, total_hours, form_completed_time) %>%
   arrange(url) %>%
   app_table()
@@ -180,7 +180,7 @@ apps %>%
 ```{r, inactive_apps}
 #| title: Inactive
 inactive %>% 
-  arrange(org_grouped, org != "Scottish Government", url) %>%
+  arrange(org_group, org != "Scottish Government", url) %>%
   select(url, org, status, updated_time, total_hours, form_completed_time) %>%
   app_table()
 ```
