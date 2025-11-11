@@ -9,6 +9,8 @@ source(here::here("scripts", "00_setup.R"))
 
 # 1 - Read raw data from MS Form excel file ----
 
+refresh_form_data(config$ms_form_link)
+
 contacts <-
   read_xlsx(config$ms_form_path) %>%
   rename_cols(ms_form_names) %>%
