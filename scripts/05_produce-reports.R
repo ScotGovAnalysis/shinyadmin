@@ -7,29 +7,34 @@
 source(here::here("scripts", "00_setup.R"))
 
 
-# 1 - Write Excel file ----
+# 1 - Read analysis table ----
 
-excel <-
+analysis <-
   read_table_from_db(
     config$adm_server,
     config$database,
     config$schema,
     "analysis"
-  ) %>%
-  excel_output(org_group = "all")
+  )
 
-write_xlsx(
-  excel,
-  here("outputs", paste0(Sys.Date(), "_shiny-apps.xlsx")),
-  format_headers = FALSE
-)
+record_date <- unique(analysis$record_date)
 
 
-# 2 - Render Quarto dashboard ----
+# 2 - Write Excel file ----
+
+analysis %>%
+  excel_output(org_group = "all") %>%
+  write_xlsx(
+    here("outputs", paste0(record_date, "_shiny-apps.xlsx")),
+    format_headers = FALSE
+  )
+
+
+# 3 - Render Quarto dashboard ----
 
 render_dashboard(
   here("scripts", "dashboard", "dashboard.qmd"),
-  here("outputs", paste0(Sys.Date(), "_shinyadmin.html"))
+  here("outputs", paste0(record_date, "_shinyadmin.html"))
 )
 
 

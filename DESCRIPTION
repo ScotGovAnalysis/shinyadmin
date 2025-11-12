@@ -22,7 +22,8 @@ Imports:
     tibble,
     tidyr,
     tools,
-    quarto
+    quarto,
+    utils
 Depends: 
     R (>= 3.5)
 LazyData: true
