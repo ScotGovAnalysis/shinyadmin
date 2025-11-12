@@ -31,6 +31,8 @@
 
 refresh_form_data <- function(link, wait = 60) {
 
+  # Check `link` is valid ----
+
   skip <- function() {
     cli::cli_inform(c("i" = "No link found. Skipping refresh..."))
     invisible(NULL)
@@ -39,7 +41,30 @@ refresh_form_data <- function(link, wait = 60) {
   if (length(link) == 0) return(skip())
   if (link == "") return(skip())
 
+  # Open link in browser ----
+
+  warning_time <- 10
+  cli::cli_progress_bar(
+    total = warning_time,
+    format = paste(
+      "{cli::col_cyan(cli::symbol$info)}",
+      "Opening browser in {warning_time - t}s...",
+      "Once opened, please return to R."
+    ),
+    format_done = paste(
+      "{cli::col_green(cli::symbol$tick)} Opening browser...",
+      "Complete!"
+    ),
+    clear = FALSE
+  )
+  for (t in 1:warning_time){
+    Sys.sleep(1)
+    cli::cli_progress_update()
+  }
+
   utils::browseURL(link)
+
+  # Wait ----
 
   cli::cli_progress_bar(
     total = wait,
@@ -47,7 +72,10 @@ refresh_form_data <- function(link, wait = 60) {
       "{cli::col_cyan(cli::symbol$info)} Waiting for data file to refresh...",
       "{wait - t}s remaining"
     ),
-    format_done = "{cli::col_green(cli::symbol$tick)} Done!",
+    format_done = paste(
+      "{cli::col_green(cli::symbol$tick)} Waiting for data file to refresh...",
+      "Complete!"
+    ),
     clear = FALSE
   )
 
