@@ -20,6 +20,8 @@ The code in this repository is used to assist with administration of the Scottis
 
 4.  You must have access to the Microsoft Form used to collect contact data.
 
+5.  You must have the `shinyadmin` package installed. To do this in RStudio, navigate to the 'Build' tab (usually in top-right pane) and click 'Install'.
+
 
 ## Data
 
