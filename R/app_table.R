@@ -53,7 +53,7 @@ app_table <- function(data) {
       dplyr::matches("why_shiny") ~ gt::pct(70)
     ) %>%
     gt::opt_interactive(use_search = TRUE,
-                        use_resizers = FALSE,
+                        use_resizers = TRUE,
                         page_size_default = 25)
 
 }
