@@ -20,6 +20,8 @@ The code in this repository is used to assist with administration of the Scottis
 
 4.  You must have access to the Microsoft Form used to collect contact data, and the Excel spreadsheet where responses are stored.
 
+    * If you are not the owner of the Excel spreadsheet, you will need to download a copy before running any code.
+
 5.  You must have the `shinyadmin` package installed. To do this in RStudio, navigate to the 'Build' tab (usually in top-right pane) and click 'Install'.
 
 
@@ -42,11 +44,26 @@ There are three sources of data:
 Scripts 3 and 4 use these data sources to produce an analysis table, stored in ADM as `analysis`.
 
 
+## Config
+
+To run the process, you need to create a `config.yml` file. 
+This file isn't tracked by git, however the expected format can be seen in `config-example.yml`.
+
+The following parameters are required:
+
+* `adm_server`: The value passed to the `server` argument of `RtoSQLServer::write_dataframe_to_db`.
+
+* `ms_form_link`: The URL of the Excel spreadsheet of form responses in OneDrive online.
+
+* `ms_form_path`: The file path to where the Excel spreadsheet of form responses is stored locally.
+If you are not the owner of the Microsoft Form and are unable to access this via File Explorer, 
+you will have to download a copy of the shared file from OneDrive online. 
+The file path should then be to where you have stored this downloaded copy.
+
+
 ## Process
 
 1.  Create `config.yml` file. 
- 
-    This file isn't tracked by git, however the expected format can be seen in `config-example.yml`.
 
 2.  Run the scripts in the `scripts/` folder one by one in their numbered order.
 
