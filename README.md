@@ -18,7 +18,7 @@ The code in this repository is used to assist with administration of the Scottis
     
 3.  You must have access to the `AdministrationShinyapps` ADM database used to store the data.
 
-4.  You must have access to the Microsoft Form used to collect contact data.
+4.  You must have access to the Microsoft Form used to collect contact data, and the Excel spreadsheet where responses are stored.
 
 5.  You must have the `shinyadmin` package installed. To do this in RStudio, navigate to the 'Build' tab (usually in top-right pane) and click 'Install'.
 
