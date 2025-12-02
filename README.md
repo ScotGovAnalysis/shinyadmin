@@ -2,6 +2,15 @@
 
 The code in this repository is used to assist with administration of the Scottish Public Sector [shinyapps.io](https://www.shinyapps.io/) account (scotland.shinyapps.io). 
 
+* [Prerequisites](#prerequisites)
+* [Data](#data)
+* [Configuration](#configuration)
+* [Process](#process)
+* [Outputs](#outputs)
+* [R Package](#r-package)
+* [Contact](#contact)
+* [Licence](#licence)
+
 ## Prerequisites
 
 1.  You must be a member of the `scotland` shinyapps.io account.
@@ -43,11 +52,26 @@ There are three sources of data:
     
 Scripts 3 and 4 use these data sources to produce an analysis table, stored in ADM as `analysis`.
 
+The following chart visualises how these three data sources are processed and linked to create the `analysis` table. ADM table names are in bold.
 
-## Config
+```mermaid
+flowchart TB
+  google("`Google Form Contact Data <br> **contacts_old**`")
+  msform("`Microsoft Form Contact Data <br> **contacts_new**`")
+  contacts("`Contact Data <br> **contacts_all**`")
+  shiny("`Shiny Server App Data <br> **server_apps**`")
+  analysis("`Analysis Dataset <br> **analysis**`")
+  shiny --> analysis
+  msform --> contacts
+  google --> contacts
+  contacts --> analysis
+```
+
+
+## Configuration
 
 To run the process, you need to create a `config.yml` file. 
-This file isn't tracked by git, however the expected format can be seen in `config-example.yml`.
+This file isn't tracked by git, however the expected format can be seen in [`config-example.yml`](config-example.yml).
 
 The following parameters are required:
 
@@ -68,7 +92,7 @@ The file path should then be to where you have stored this downloaded copy.
 2.  Run the scripts in the `scripts/` folder one by one in their numbered order.
 
 
-## Output
+## Outputs
 
 These are stored in the `outputs/` folder.
 
