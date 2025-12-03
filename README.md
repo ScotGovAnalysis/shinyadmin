@@ -29,7 +29,7 @@ The code in this repository is used to assist with administration of the Scottis
 
 4.  You must have access to the Microsoft Form used to collect contact data, and the Excel spreadsheet where responses are stored.
 
-    * If you are not the owner of the Excel spreadsheet, you will need to download a copy before running any code.
+    * If you are not the owner of the Excel spreadsheet, you will also need to download a copy before running any code.
 
 5.  You must have the `shinyadmin` package installed. To do this in RStudio, navigate to the 'Build' tab (usually in top-right pane) and click 'Install'.
 
@@ -83,6 +83,11 @@ The following parameters are required:
 If you are not the owner of the Microsoft Form and are unable to access this via File Explorer, 
 you will have to download a copy of the shared file from OneDrive online. 
 The file path should then be to where you have stored this downloaded copy.
+
+Note that for the Excel spreadsheet of form responses, both the URL (`ms_form_link`) and the local file path (`ms_form_path`) are required.
+The URL is used to open the Excel file in a browser. 
+This must be done to refresh the file with the latest responses from the MS Form.
+The local file path is used to read the data into R.
 
 
 ## Process
