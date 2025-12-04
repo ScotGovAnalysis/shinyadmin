@@ -2,6 +2,15 @@
 
 The code in this repository is used to assist with administration of the Scottish Public Sector [shinyapps.io](https://www.shinyapps.io/) account (scotland.shinyapps.io). 
 
+* [Prerequisites](#prerequisites)
+* [Data](#data)
+* [Configuration](#configuration)
+* [Process](#process)
+* [Outputs](#outputs)
+* [R Package](#r-package)
+* [Contact](#contact)
+* [Licence](#licence)
+
 ## Prerequisites
 
 1.  You must be a member of the `scotland` shinyapps.io account.
@@ -18,7 +27,9 @@ The code in this repository is used to assist with administration of the Scottis
     
 3.  You must have access to the `AdministrationShinyapps` ADM database used to store the data.
 
-4.  You must have access to the Microsoft Form used to collect contact data.
+4.  You must have access to the Microsoft Form used to collect contact data, and the Excel spreadsheet where responses are stored.
+
+    * If you are not the owner of the Excel spreadsheet, you will also need to download a copy before running any code.
 
 5.  You must have the `shinyadmin` package installed. To do this in RStudio, navigate to the 'Build' tab (usually in top-right pane) and click 'Install'.
 
@@ -41,17 +52,52 @@ There are three sources of data:
     
 Scripts 3 and 4 use these data sources to produce an analysis table, stored in ADM as `analysis`.
 
+The following chart visualises how these three data sources are processed and linked to create the `analysis` table. ADM table names are in bold.
+
+```mermaid
+flowchart TB
+  google("`Google Form Contact Data <br> **contacts_old**`")
+  msform("`Microsoft Form Contact Data <br> **contacts_new**`")
+  contacts("`Contact Data <br> **contacts_all**`")
+  shiny("`Shiny Server App Data <br> **server_apps**`")
+  analysis("`Analysis Dataset <br> **analysis**`")
+  shiny --> analysis
+  msform --> contacts
+  google --> contacts
+  contacts --> analysis
+```
+
+
+## Configuration
+
+To run the process, you need to create a `config.yml` file. 
+This file isn't tracked by git, however the expected format can be seen in [`config-example.yml`](config-example.yml).
+
+The following parameters are required:
+
+* `adm_server`: The value passed to the `server` argument of `RtoSQLServer::write_dataframe_to_db`.
+
+* `ms_form_link`: The URL of the Excel spreadsheet of form responses in OneDrive online.
+
+* `ms_form_path`: The file path to where the Excel spreadsheet of form responses is stored locally.
+If you are not the owner of the Microsoft Form and are unable to access this via File Explorer, 
+you will have to download a copy of the shared file from OneDrive online. 
+The file path should then be to where you have stored this downloaded copy.
+
+Note that for the Excel spreadsheet of form responses, both the URL (`ms_form_link`) and the local file path (`ms_form_path`) are required.
+The URL is used to open the Excel file in a browser. 
+This must be done to refresh the file with the latest responses from the MS Form.
+The local file path is used to read the data into R.
+
 
 ## Process
 
 1.  Create `config.yml` file. 
- 
-    This file isn't tracked by git, however the expected format can be seen in `config-example.yml`.
 
 2.  Run the scripts in the `scripts/` folder one by one in their numbered order.
 
 
-## Output
+## Outputs
 
 These are stored in the `outputs/` folder.
 
